@@ -9,6 +9,10 @@
  */
 
 /**
+ * Props to original contributors of https://github.com/wp-cli/doctor-command .
+ */
+
+/**
  * Checks for Core stats.
  */
 class WPMUDEV_Doctor_Core_Stats extends runcommand\Doctor\Checks\Check {
@@ -272,7 +276,7 @@ class WPMUDEV_Doctor_TTFB extends runcommand\Doctor\Checks\Check {
 			$this->set_message( 'Could not retrieve Time to first byte.' );
 		} else {
 			$this->set_status( 'success' );
-			$this->set_message( 'Time to first byte (TTFB): ' . $curl_info['starttransfer_time'] .' seconds.' );
+			$this->set_message( 'Time to first byte (TTFB): ' . $curl_info['starttransfer_time'] . ' seconds.' );
 		}
 	}
 }
@@ -313,5 +317,31 @@ class WPMUDEV_Doctor_Cache_Headers extends runcommand\Doctor\Checks\Check {
 		$array  = (array) $obj;
 		$prefix = chr( 0 ) . '*' . chr( 0 );
 		return $array[ $prefix . $prop ];
+	}
+}
+
+/**
+ * Verify Core Checksums.
+ */
+class WPMUDEV_Doctor_Verify_Core_Checksums extends runcommand\Doctor\Checks\Check {
+
+	public function __construct( $options = array() ) {
+		parent::__construct( $options );
+		$this->set_when( 'before_wp_load' );
+	}
+
+	public function run() {
+		$checksums = WP_CLI::launch_self( 'core verify-checksums', array(), array(), false, true );
+		error_log( print_r( $checksums, true ) );
+
+		if ( 0 === $checksums->return_code && empty( $checksums->stderr ) ) {
+			$this->set_status( 'success' );
+			$message = 'WordPress verifies against its checksums.';
+		} else {
+			$this->set_status( 'error' );
+			$message = 'Some files did not verify against their checksum or should not exist.';
+		}
+
+		$this->set_message( $message );
 	}
 }

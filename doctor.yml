@@ -23,8 +23,9 @@ wpmudev-ttfb:
 wpmudev-cache-headers:
   class: WPMUDEV_Doctor_Cache_Headers
   require: /var/web/site/public_html/doctor/wpmudev-doctor.php
-core-verify-checksums:
-  check: Core_Verify_Checksums
+wpmudev-verify-core-checksums:
+  class: WPMUDEV_Doctor_Verify_Core_Checksums
+  require: /var/web/site/public_html/doctor/wpmudev-doctor.php
 cron-count:
   check: Cron_Count
 cron-duplicates:
