@@ -332,7 +332,6 @@ class WPMUDEV_Doctor_Verify_Core_Checksums extends runcommand\Doctor\Checks\Chec
 
 	public function run() {
 		$checksums = WP_CLI::launch_self( 'core verify-checksums', array(), array(), false, true );
-		error_log( print_r( $checksums, true ) );
 
 		if ( 0 === $checksums->return_code && empty( $checksums->stderr ) ) {
 			$this->set_status( 'success' );
