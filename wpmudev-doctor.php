@@ -117,7 +117,7 @@ class WPMUDEV_Doctor_Plugin_Stats extends runcommand\Doctor\Checks\Check {
 		$total_active_plugins   = $active_plugins + $active_network_plugins;
 
 		$this->set_status( 'success' );
-		$this->set_message( $total_plugins . ' Total | ' . $total_active_plugins . ' Active | ' . $inactive_plugins . ' Inactive | ' . $mu_plugins . ' Must-use | ' . $dropin_plugins . ' Dropins.' );
+		$this->set_message( 'Plugins: ' . $total_plugins . ' Total | ' . $total_active_plugins . ' Active | ' . $inactive_plugins . ' Inactive | ' . $mu_plugins . ' Must-use | ' . $dropin_plugins . ' Dropins.' );
 	}
 }
 
@@ -137,7 +137,7 @@ class WPMUDEV_Doctor_Theme_Stats extends runcommand\Doctor\Checks\Check {
 		$total_themes = WP_CLI::runcommand( 'theme list --format=count', $cmd_options );
 
 		$this->set_status( 'success' );
-		$this->set_message( $total_themes . ' Total.' );
+		$this->set_message( 'Themes: ' . $total_themes . ' Total.' );
 	}
 }
 
@@ -171,7 +171,7 @@ class WPMUDEV_Doctor_User_Stats extends runcommand\Doctor\Checks\Check {
 			$role_result = 'No roles found.';
 		}
 
-		$this->set_message( $total_users . ' Total Users | ' . $role_result );
+		$this->set_message( 'Users: ' . $total_users . ' Total | ' . $role_result );
 	}
 }
 
@@ -193,7 +193,7 @@ class WPMUDEV_Doctor_Posts_Stats extends runcommand\Doctor\Checks\Check {
 		$attachments = WP_CLI::runcommand( 'post list --post_type=attachment --format=count', $cmd_options );
 
 		$this->set_status( 'success' );
-		$this->set_message( $posts . ' Posts | ' . $pages . ' Pages | ' . $attachments . ' Attachments.' );
+		$this->set_message( 'Posts: ' . $posts . ' | Pages: ' . $pages . ' | Attachments: ' . $attachments . '.' );
 	}
 }
 
@@ -236,10 +236,10 @@ class WPMUDEV_Doctor_Autoload_Report extends runcommand\Doctor\Checks\Check {
 			}
 
 			$this->set_status( 'warning' );
-			$this->set_message( "Autoload options size is {$human_total} (limit {$human_threshold}). | 3 biggest options: " . implode( ', ', $final_data ) . '.' );
+			$this->set_message( "Autoload size: {$human_total} (limit {$human_threshold}). | 3 biggest options: " . implode( ', ', $final_data ) . '.' );
 		} else {
 			$this->set_status( 'success' );
-			$this->set_message( "Autoload options size is {$human_total} (limit {$human_threshold})." );
+			$this->set_message( "Autoload size: {$human_total} (limit {$human_threshold})." );
 		}
 	}
 
@@ -306,7 +306,7 @@ class WPMUDEV_Doctor_Cache_Headers extends runcommand\Doctor\Checks\Check {
 
 		if ( $found_headers ) {
 			$this->set_status( 'success' );
-			$this->set_message( 'Cache Headers found: ' . implode( ', ', $found_headers ) . '.' );
+			$this->set_message( 'Cache Headers: ' . implode( ', ', $found_headers ) . '.' );
 		} else {
 			$this->set_status( 'warning' );
 			$this->set_message( 'Could not find any cache headers.' );
@@ -391,7 +391,7 @@ class WPMUDEV_Doctor_Cron_Stats extends runcommand\Doctor\Checks\Check {
 			$dup_msg = ' Detected ' . self::$dup_threshold_count . ' or more of the same cron job.';
 		}
 
-		$this->set_message( $cron_count . ' Total cron jobs (limit ' . self::$threshold_count . ').' . $dup_msg );
+		$this->set_message( 'Cron Jobs: ' . $cron_count . ' Total (limit ' . self::$threshold_count . ').' . $dup_msg );
 
 	}
 }
