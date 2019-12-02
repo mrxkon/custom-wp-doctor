@@ -26,10 +26,9 @@ wpmudev-cache-headers:
 wpmudev-verify-core-checksums:
   class: WPMUDEV_Doctor_Verify_Core_Checksums
   require: /var/web/site/public_html/doctor/wpmudev-doctor.php
-cron-count:
-  check: Cron_Count
-cron-duplicates:
-  check: Cron_Duplicates
+wpmudev-cron-stats:
+  class: WPMUDEV_Doctor_Cron_Stats
+  require: /var/web/site/public_html/doctor/wpmudev-doctor.php
 file-eval:
   check: File_Contents
   options:

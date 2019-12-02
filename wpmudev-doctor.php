@@ -236,10 +236,10 @@ class WPMUDEV_Doctor_Autoload_Report extends runcommand\Doctor\Checks\Check {
 			}
 
 			$this->set_status( 'warning' );
-			$this->set_message( "Autoloaded options size is {$human_total}. | 3 biggest options: " . implode( ', ', $final_data ) ) . '.';
+			$this->set_message( "Autoload options size is {$human_total} (limit {$human_threshold}). | 3 biggest options: " . implode( ', ', $final_data ) ) . '.';
 		} else {
 			$this->set_status( 'success' );
-			$this->set_message( "Autoloaded options size is less than {$human_threshold}." );
+			$this->set_message( "Autoload options size is {$human_total} (limit {$human_threshold})." );
 		}
 	}
 
@@ -342,5 +342,56 @@ class WPMUDEV_Doctor_Verify_Core_Checksums extends runcommand\Doctor\Checks\Chec
 		}
 
 		$this->set_message( $message );
+	}
+}
+
+/**
+ * Cron Checks.
+ */
+class WPMUDEV_Doctor_Cron_Stats extends runcommand\Doctor\Checks\Check {
+
+	protected static $threshold_count = 50;
+
+	protected static $dup_threshold_count = 10;
+
+	public function run() {
+		// Count crons.
+		$cmd_options = array(
+			'return'     => true,
+			'parse'      => 'json',
+			'launch'     => false,
+			'exit_error' => true,
+		);
+
+		$crons      = WP_CLI::runcommand( 'cron event list --format=json', $cmd_options );
+		$cron_count = count( $crons );
+
+		if ( $cron_count >= self::$threshold_count ) {
+			$this->set_status( 'warning' );
+		} else {
+			$this->set_status( 'success' );
+		}
+
+		// Cound duplicates.
+		$job_counts        = array();
+		$excess_duplicates = false;
+
+		foreach ( $crons as $job ) {
+			if ( ! isset( $job_counts[ $job['hook'] ] ) ) {
+				$job_counts[ $job['hook'] ] = 0;
+			}
+			$job_counts[ $job['hook'] ]++;
+			if ( $job_counts[ $job['hook'] ] >= self::$dup_threshold_count ) {
+				$excess_duplicates = true;
+			}
+		}
+
+		if ( $excess_duplicates ) {
+			$this->set_status( 'warning' );
+			$dup_msg = ' Detected ' . self::$dup_threshold_count . ' or more of the same cron job.';
+		}
+
+		$this->set_message( $cron_count . ' Total cron jobs (limit ' . self::$threshold_count . ').' . $dup_msg );
+
 	}
 }
