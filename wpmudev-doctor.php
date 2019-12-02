@@ -189,11 +189,10 @@ class WPMUDEV_Doctor_Posts_Stats extends runcommand\Doctor\Checks\Check {
 
 		$posts       = WP_CLI::runcommand( 'post list --post_type=post --format=count', $cmd_options );
 		$pages       = WP_CLI::runcommand( 'post list --post_type=page --format=count', $cmd_options );
-		$posts_count = ( $posts ) ? $posts : 0;
-		$pages_count = ( $pages ) ? $pages : 0;
+		$attachments = WP_CLI::runcommand( 'post list --post_type=attachment --format=count', $cmd_options );
 
 		$this->set_status( 'success' );
-		$this->set_message( $posts_count . ' Posts | ' . $pages_count . ' Pages.' );
+		$this->set_message( $posts . ' Posts | ' . $pages . ' Pages | ' . $attachments . ' Attachments.' );
 	}
 }
 
