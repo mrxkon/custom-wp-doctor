@@ -235,7 +235,7 @@ class WPMUDEV_Doctor_Autoload_Report extends runcommand\Doctor\Checks\Check {
 			}
 
 			$this->set_status( 'warning' );
-			$this->set_message( "Autoload options size is {$human_total} (limit {$human_threshold}). | 3 biggest options: " . implode( ', ', $final_data ) ) . '.';
+			$this->set_message( "Autoload options size is {$human_total} (limit {$human_threshold}). | 3 biggest options: " . implode( ', ', $final_data ) . '.' );
 		} else {
 			$this->set_status( 'success' );
 			$this->set_message( "Autoload options size is {$human_total} (limit {$human_threshold})." );
@@ -305,7 +305,7 @@ class WPMUDEV_Doctor_Cache_Headers extends runcommand\Doctor\Checks\Check {
 
 		if ( $found_headers ) {
 			$this->set_status( 'success' );
-			$this->set_message( 'Cache Headers found: ' . implode( ', ', $found_headers ) ) . '.';
+			$this->set_message( 'Cache Headers found: ' . implode( ', ', $found_headers ) . '.' );
 		} else {
 			$this->set_status( 'warning' );
 			$this->set_message( 'Could not find any cache headers.' );
