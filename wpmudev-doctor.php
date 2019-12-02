@@ -161,7 +161,8 @@ class WPMUDEV_Doctor_User_Stats extends runcommand\Doctor\Checks\Check {
 		if ( $roles ) {
 			$this->set_status( 'success' );
 			foreach ( $roles as $role ) {
-				array_push( $role_list, $role['name'] . '(' . $role['role'] . ')' );
+				$count_users = WP_CLI::runcommand( 'user list --format=count --role=' . $role['role'], $cmd_options );
+				array_push( $role_list, $count_users . ' ' . $role['role'] );
 			}
 
 			$role_result = 'Roles: ' . implode( ', ', $role_list ) . '.';
