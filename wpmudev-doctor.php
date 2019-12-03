@@ -30,14 +30,14 @@ class WPMUDEV_Doctor_Core_Stats extends runcommand\Doctor\Checks\Check {
 			$total_sites = WP_CLI::runcommand( 'site list --format=count', $cmd_options );
 
 			if ( defined( 'SUBDOMAIN_INSTALL' ) && SUBDOMAIN_INSTALL ) {
-				$wpmu_type = 'Subdomain';
+				$wpmu_type = 'Subdomain Multisite';
 			} else {
-				$wpmu_type = 'Subdirectory';
+				$wpmu_type = 'Subdirectory Multisite';
 			}
 
-			$multisite_stats = ' | ' . $wpmu_type . ' Multisite | Sites: ' . $total_sites;
+			$multisite_stats = $wpmu_type . ', ' . $total_sites . ' Sites Total';
 		} else {
-			$multisite_stats = ' | Single Site';
+			$multisite_stats = 'Single Site';
 		}
 
 		// Public option.
@@ -51,9 +51,9 @@ class WPMUDEV_Doctor_Core_Stats extends runcommand\Doctor\Checks\Check {
 		$public = WP_CLI::runcommand( 'option get blog_public', $cmd_options );
 
 		if ( ! $public ) {
-			$public_msg = ' | Public: False.';
+			$public_msg = 'Not Public.';
 		} else {
-			$public_msg = ' | Public: True.';
+			$public_msg = 'Public.';
 		}
 
 		// Core updates.
@@ -91,7 +91,7 @@ class WPMUDEV_Doctor_Core_Stats extends runcommand\Doctor\Checks\Check {
 			$this->set_status( 'warning' );
 		}
 
-		$this->set_message( $core . $multisite_stats . $public_msg );
+		$this->set_message( $core . ' ' . $multisite_stats . ', ' . $public_msg );
 	}
 }
 
