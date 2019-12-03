@@ -18,6 +18,37 @@
 class WPMUDEV_Doctor_Core_Stats extends runcommand\Doctor\Checks\Check {
 
 	public function run() {
+		// Core updates.
+		ob_start();
+		WP_CLI::run_command( array( 'core', 'check-update' ), array( 'format' => 'json' ) );
+		$ret = ob_get_clean();
+
+		$updates   = ! empty( $ret ) ? json_decode( $ret, true ) : array();
+		$has_minor = false;
+		$has_major = false;
+
+		foreach ( $updates as $update ) {
+			switch ( $update['update_type'] ) {
+				case 'minor':
+					$has_minor = true;
+					break;
+				case 'major':
+					$has_major = true;
+					break;
+			}
+		}
+
+		if ( $has_minor ) {
+			$this->set_status( 'warning' );
+			$core = 'A new minor version is available.';
+		} elseif ( $has_major ) {
+			$this->set_status( 'warning' );
+			$core = 'A new major version is available.';
+		} else {
+			$this->set_status( 'success' );
+			$core = 'WordPress is at the latest version.';
+		}
+
 		// Multisite information.
 		if ( is_multisite() ) {
 			$cmd_options = array(
@@ -50,47 +81,17 @@ class WPMUDEV_Doctor_Core_Stats extends runcommand\Doctor\Checks\Check {
 
 		$public = WP_CLI::runcommand( 'option get blog_public', $cmd_options );
 
-		if ( ! $public ) {
-			$public_msg = 'Not Public.';
-		} else {
+		if ( 1 === $public ) {
 			$public_msg = 'Public.';
-		}
-
-		// Core updates.
-		ob_start();
-		WP_CLI::run_command( array( 'core', 'check-update' ), array( 'format' => 'json' ) );
-		$ret = ob_get_clean();
-
-		$updates   = ! empty( $ret ) ? json_decode( $ret, true ) : array();
-		$has_minor = false;
-		$has_major = false;
-
-		foreach ( $updates as $update ) {
-			switch ( $update['update_type'] ) {
-				case 'minor':
-					$has_minor = true;
-					break;
-				case 'major':
-					$has_major = true;
-					break;
-			}
-		}
-
-		if ( $has_minor ) {
-			$this->set_status( 'warning' );
-			$core = 'A new minor version is available.';
-		} elseif ( $has_major ) {
-			$this->set_status( 'warning' );
-			$core = 'A new major version is available.';
 		} else {
-			$this->set_status( 'success' );
-			$core = 'WordPress is at the latest version.';
+			$public_msg = 'Not Public.';
 		}
 
-		if ( ! $public ) {
+		if ( 1 !== $public ) {
 			$this->set_status( 'warning' );
 		}
 
+		// Message
 		$this->set_message( $core . ' ' . $multisite_stats . ', ' . $public_msg );
 	}
 }
