@@ -1,36 +1,29 @@
 # WPMU DEV configuration for `wp doctor`
-# core stats
 wpmudev-core-stats:
   class: WPMUDEV_Doctor_Core_Stats
   require: /var/web/site/public_html/doctor/wpmudev-doctor.php
-# plugins
 wpmudev-plugin-stats:
   class: WPMUDEV_Doctor_Plugin_Stats
   require: /var/web/site/public_html/doctor/wpmudev-doctor.php
 plugin-update:
   check: Plugin_Update
-# themes
 wpmudev-theme-stats:
   class: WPMUDEV_Doctor_Theme_Stats
   require: /var/web/site/public_html/doctor/wpmudev-doctor.php
 theme-update:
   check: Theme_Update
-# users & roles
 wpmudev-user-stats:
   class: WPMUDEV_Doctor_User_Stats
   require: /var/web/site/public_html/doctor/wpmudev-doctor.php
 wpmudev-roles-stats:
   class: WPMUDEV_Doctor_Role_Stats
   require: /var/web/site/public_html/doctor/wpmudev-doctor.php
-# post stats
 wpmudev-posts-stats:
   class: WPMUDEV_Doctor_Posts_Stats
   require: /var/web/site/public_html/doctor/wpmudev-doctor.php
-# autoload report
 wpmudev-autoload-report:
   class: WPMUDEV_Doctor_Autoload_Report
   require: /var/web/site/public_html/doctor/wpmudev-doctor.php
-# ttfb
 wpmudev-ttfb:
   class: WPMUDEV_Doctor_TTFB
   require: /var/web/site/public_html/doctor/wpmudev-doctor.php
