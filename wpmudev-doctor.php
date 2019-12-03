@@ -232,7 +232,7 @@ class WPMUDEV_Doctor_Posts_Stats extends runcommand\Doctor\Checks\Check {
 		$attachments = WP_CLI::runcommand( 'post list --post_type=attachment --format=count', $cmd_options );
 
 		$this->set_status( 'success' );
-		$this->set_message( 'Posts: ' . $posts . ' | Pages: ' . $pages . ' | Attachments: ' . $attachments . '.' );
+		$this->set_message( $posts . ' Posts, ' . $pages . ' Pages, ' . $attachments . ' Attachments.' );
 	}
 }
 
@@ -275,7 +275,7 @@ class WPMUDEV_Doctor_Autoload_Report extends runcommand\Doctor\Checks\Check {
 			}
 
 			$this->set_status( 'warning' );
-			$this->set_message( "{$human_total} Total (limit {$human_threshold}). | 3 biggest options: " . implode( ', ', $final_data ) . '.' );
+			$this->set_message( "{$human_total} Total (limit {$human_threshold}). 3 biggest options: " . implode( ', ', $final_data ) . '.' );
 		} else {
 			$this->set_status( 'success' );
 			$this->set_message( "{$human_total} Total (limit {$human_threshold})." );
