@@ -161,7 +161,7 @@ class WPMUDEV_Doctor_User_Stats extends runcommand\Doctor\Checks\Check {
 			$total_users = WP_CLI::runcommand( 'user list --format=count', $cmd_options );
 		}
 
-		if ( 0 !== intval( $total_users ) ) {
+		if ( 0 !== $total_users ) {
 			$this->set_status( 'success' );
 			$this->set_message( $total_users . ' Total.' );
 		} else {
@@ -187,7 +187,7 @@ class WPMUDEV_Doctor_Role_Stats extends runcommand\Doctor\Checks\Check {
 		$roles     = WP_CLI::runcommand( 'role list --format=json', $cmd_options );
 		$role_list = array();
 
-		if ( $roles ) {
+		if ( ! empty( $roles ) ) {
 			$this->set_status( 'success' );
 			foreach ( $roles as $role ) {
 				$count_users = WP_CLI::runcommand( 'user list --format=count --role=' . $role['role'], $cmd_options );
@@ -344,7 +344,7 @@ class WPMUDEV_Doctor_Cache_Headers extends runcommand\Doctor\Checks\Check {
 			$found_headers[] = 'Cloudflare';
 		}
 
-		if ( $found_headers ) {
+		if ( ! empty( $found_headers ) ) {
 			$this->set_status( 'success' );
 			$this->set_message( implode( ', ', $found_headers ) . '.' );
 		} else {
