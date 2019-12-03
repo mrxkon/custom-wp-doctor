@@ -315,7 +315,7 @@ class WPMUDEV_Doctor_TTFB extends runcommand\Doctor\Checks\Check {
 			$this->set_message( 'Could not retrieve Time to first byte.' );
 		} else {
 			$this->set_status( 'success' );
-			$this->set_message( 'Time to first byte (TTFB): ' . $curl_info['starttransfer_time'] . ' seconds.' );
+			$this->set_message( $curl_info['starttransfer_time'] . 's Time to first byte (TTFB).' );
 		}
 	}
 }
@@ -345,7 +345,7 @@ class WPMUDEV_Doctor_Cache_Headers extends runcommand\Doctor\Checks\Check {
 
 		if ( $found_headers ) {
 			$this->set_status( 'success' );
-			$this->set_message( 'Cache Headers: ' . implode( ', ', $found_headers ) . '.' );
+			$this->set_message( implode( ', ', $found_headers ) . '.' );
 		} else {
 			$this->set_status( 'warning' );
 			$this->set_message( 'Could not find any cache headers.' );
@@ -431,6 +431,103 @@ class WPMUDEV_Doctor_Cron_Stats extends runcommand\Doctor\Checks\Check {
 		}
 
 		$this->set_message( $cron_count . ' Total (limit ' . self::$threshold_count . ').' . $dup_msg );
+
+	}
+}
+
+/**
+ * Constants Checks.
+ */
+class WPMUDEV_Doctor_Constants extends runcommand\Doctor\Checks\Check {
+
+	protected static $undefined_constants = array(
+		'WP_DEBUG',
+		'SAVEQUERIES',
+		'DISABLE_WP_CRON',
+		'ALTERNATE_WP_CRON',
+		'FS_METHOD',
+		'FTP_BASE',
+		'FTP_CONTENT_DIR',
+		'FTP_PLUGIN_DIR',
+		'FTP_PUBKEY',
+		'FTP_PRIKEY',
+		'FTP_USER',
+		'FTP_PASS',
+		'FTP_HOST',
+		'FTP_SSL',
+	);
+
+	protected static $predefined_constants = array(
+		'WP_CONTENT_DIR',
+		'WP_CONTENT_URL',
+		'FS_CHMOD_DIR',
+		'FS_CHMOD_FILE',
+	);
+
+	public function run() {
+		$this->set_status( 'success' );
+
+		$message         = 'All constants are ok.';
+		$content_dir     = ABSPATH . 'wp-content';
+		$content_url     = rtrim( get_site_url(), '/' ) . '/wp-content';
+		$wrong_constants = array();
+
+		foreach ( self::$undefined_constants as $constant ) {
+			if ( defined( $constant ) ) {
+				if ( 'SAVEQUERIES' === $constant || 'WP_DEBUG' === $constant ) {
+					if ( 'SAVEQUERIES' === $constant && true === constant( 'SAVEQUERIES' ) ) {
+						$wrong_constants['defined'][] = $constant;
+					}
+					if ( 'WP_DEBUG' === $constant && true === constant( 'WP_DEBUG' ) ) {
+						$wrong_constants['defined'][] = $constant;
+					}
+				} else {
+					$wrong_constants['defined'][] = $constant;
+				}
+			}
+		}
+
+		foreach ( self::$predefined_constants as $constant ) {
+			switch ( $constant ) {
+				case 'WP_CONTENT_DIR':
+					if ( defined( 'WP_CONTENT_DIR' ) && constant( 'WP_CONTENT_DIR' ) !== $content_dir ) {
+						$wrong_constants['changed'][] = $constant;
+					}
+					break;
+				case 'WP_CONTENT_URL':
+					if ( defined( 'WP_CONTENT_URL' ) && constant( 'WP_CONTENT_URL' ) !== $content_url ) {
+						$wrong_constants['changed'][] = $constant;
+					}
+					break;
+				case 'FS_CHMOD_DIR':
+					if ( defined( 'FS_CHMOD_DIR' ) && 493 !== constant( 'FS_CHMOD_DIR' ) ) {
+						$wrong_constants['changed'][] = $constant;
+					}
+					break;
+				case 'FS_CHMOD_FILE':
+					if ( defined( 'FS_CHMOD_FILE' ) && 420 !== constant( 'FS_CHMOD_FILE' ) ) {
+						$wrong_constants['changed'][] = $constant;
+					}
+					break;
+			}
+		}
+
+		if ( ! empty( $wrong_constants ) ) {
+			$this->set_status( 'warning' );
+			$message = '';
+
+			if ( array_key_exists( 'defined', $wrong_constants ) ) {
+				$message .= 'Defined: ' . implode( ', ', $wrong_constants['defined'] ) . '.';
+			}
+			if ( array_key_exists( 'defined', $wrong_constants ) && array_key_exists( 'changed', $wrong_constants ) ) {
+				$message .= ' ';
+			}
+			if ( array_key_exists( 'changed', $wrong_constants ) ) {
+				$message .= 'Changed: ' . implode( ', ', $wrong_constants['changed'] );
+			}
+		}
+
+		$this->set_message( $message );
 
 	}
 }

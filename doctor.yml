@@ -43,6 +43,9 @@ wpmudev-verify-core-checksums:
 wpmudev-cron-stats:
   class: WPMUDEV_Doctor_Cron_Stats
   require: /var/web/site/public_html/doctor/wpmudev-doctor.php
+wpmudev-constants:
+  class: WPMUDEV_Doctor_Constants
+  require: /var/web/site/public_html/doctor/wpmudev-doctor.php
 file-eval:
   check: File_Contents
   options:
@@ -53,52 +56,3 @@ php-in-upload:
   check: PHP_In_Upload
 language-update:
   check: Language_Update
-constant-wp-debug-falsy:
-  check: Constant_Definition
-  options:
-    constant: WP_DEBUG
-    falsy: true
-constant-savequeries-falsy:
-  check: Constant_Definition
-  options:
-    constant: SAVEQUERIES
-    falsy: true
-constant-disable-wp-cron-falsy:
-  check: Constant_Definition
-  options:
-    constant: DISABLE_WP_CRON
-    falsy: true
-constant-alternate-wp-cron-falsy:
-  check: Constant_Definition
-  options:
-    constant: ALTERNATE_WP_CRON
-    falsy: true
-constant-wp-content-dir-falsy:
-  check: Constant_Definition
-  options:
-    constant: WP_CONTENT_DIR
-    falsy: false
-constant-wp-content-url-falsy:
-  check: Constant_Definition
-  options:
-    constant: WP_CONTENT_URL
-    falsy: false
-constant-fs-method-falsy:
-  check: Constant_Definition
-  options:
-    constant: FS_METHOD
-    falsy: true
-
-
-
-# FTP_BASE
-# FTP_CONTENT_DIR
-# FTP_PLUGIN_DIR
-# FTP_PUBKEY
-# FTP_PRIKEY
-# FTP_USER
-# FTP_PASS
-# FTP_HOST
-# FTP_SSL
-# FS_CHMOD_DIR
-# FS_CHMOD_FILE
