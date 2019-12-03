@@ -117,7 +117,7 @@ class WPMUDEV_Doctor_Plugin_Stats extends runcommand\Doctor\Checks\Check {
 		$total_active_plugins   = $active_plugins + $active_network_plugins;
 
 		$this->set_status( 'success' );
-		$this->set_message( 'Plugins: ' . $total_plugins . ' Total | ' . $total_active_plugins . ' Active | ' . $inactive_plugins . ' Inactive | ' . $mu_plugins . ' Must-use | ' . $dropin_plugins . ' Dropins.' );
+		$this->set_message( $total_plugins . ' Total, ' . $total_active_plugins . ' Active, ' . $inactive_plugins . ' Inactive, ' . $mu_plugins . ' Must-use, ' . $dropin_plugins . ' Dropins.' );
 	}
 }
 
@@ -137,7 +137,7 @@ class WPMUDEV_Doctor_Theme_Stats extends runcommand\Doctor\Checks\Check {
 		$total_themes = WP_CLI::runcommand( 'theme list --format=count', $cmd_options );
 
 		$this->set_status( 'success' );
-		$this->set_message( 'Themes: ' . $total_themes . ' Total.' );
+		$this->set_message( $total_themes . ' Total.' );
 	}
 }
 
@@ -154,9 +154,37 @@ class WPMUDEV_Doctor_User_Stats extends runcommand\Doctor\Checks\Check {
 			'exit_error' => true,
 		);
 
-		$total_users = WP_CLI::runcommand( 'user list --format=count', $cmd_options );
-		$roles       = WP_CLI::runcommand( 'role list --format=json', $cmd_options );
-		$role_list   = array();
+		if ( is_multisite() ) {
+			$total_users = WP_CLI::runcommand( 'user list --format=count --network', $cmd_options );
+		} else {
+			$total_users = WP_CLI::runcommand( 'user list --format=count', $cmd_options );
+		}
+
+		if ( 0 !== intval( $total_users ) ) {
+			$this->set_status( 'success' );
+			$this->set_message( $total_users . ' Total.' );
+		} else {
+			$this->set_status( 'error' );
+			$this->set_message( 'No Users found.' );
+		}
+	}
+}
+
+/**
+ * Checks for Role stats.
+ */
+class WPMUDEV_Doctor_Role_Stats extends runcommand\Doctor\Checks\Check {
+
+	public function run() {
+		$cmd_options = array(
+			'return'     => true,
+			'parse'      => 'json',
+			'launch'     => false,
+			'exit_error' => true,
+		);
+
+		$roles     = WP_CLI::runcommand( 'role list --format=json', $cmd_options );
+		$role_list = array();
 
 		if ( $roles ) {
 			$this->set_status( 'success' );
@@ -165,13 +193,24 @@ class WPMUDEV_Doctor_User_Stats extends runcommand\Doctor\Checks\Check {
 				array_push( $role_list, $count_users . ' ' . $role['role'] );
 			}
 
-			$role_result = 'Roles: ' . implode( ', ', $role_list ) . '.';
+			$role_result = implode( ', ', $role_list ) . '.';
 		} else {
-			$this->set_status( 'warning' );
+			$this->set_status( 'error' );
 			$role_result = 'No roles found.';
 		}
 
-		$this->set_message( 'Users: ' . $total_users . ' Total | ' . $role_result );
+		if ( is_multisite() ) {
+			$super_admins = WP_CLI::runcommand( 'super-admin list --format=count', $cmd_options );
+
+			if ( 0 === $super_admins ) {
+				$this->set_status( 'error' );
+				$super_admin = '0 Super Admins, ';
+			} else {
+				$super_admin = $super_admins . ' Super Admins, ';
+			}
+		}
+
+		$this->set_message( $super_admin . $role_result );
 	}
 }
 
@@ -236,10 +275,10 @@ class WPMUDEV_Doctor_Autoload_Report extends runcommand\Doctor\Checks\Check {
 			}
 
 			$this->set_status( 'warning' );
-			$this->set_message( "Autoload size: {$human_total} (limit {$human_threshold}). | 3 biggest options: " . implode( ', ', $final_data ) . '.' );
+			$this->set_message( "{$human_total} Total (limit {$human_threshold}). | 3 biggest options: " . implode( ', ', $final_data ) . '.' );
 		} else {
 			$this->set_status( 'success' );
-			$this->set_message( "Autoload size: {$human_total} (limit {$human_threshold})." );
+			$this->set_message( "{$human_total} Total (limit {$human_threshold})." );
 		}
 	}
 
@@ -391,7 +430,7 @@ class WPMUDEV_Doctor_Cron_Stats extends runcommand\Doctor\Checks\Check {
 			$dup_msg = ' Detected ' . self::$dup_threshold_count . ' or more of the same cron job.';
 		}
 
-		$this->set_message( 'Cron Jobs: ' . $cron_count . ' Total (limit ' . self::$threshold_count . ').' . $dup_msg );
+		$this->set_message( $cron_count . ' Total (limit ' . self::$threshold_count . ').' . $dup_msg );
 
 	}
 }
