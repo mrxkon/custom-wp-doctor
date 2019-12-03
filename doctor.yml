@@ -39,6 +39,9 @@ wpmudev-cron-stats:
 wpmudev-constants:
   class: WPMUDEV_Doctor_Constants
   require: /var/web/site/public_html/doctor/wpmudev-doctor.php
+wpmudev-log-scan:
+  class: WPMUDEV_Doctor_Log_Scan
+  require: /var/web/site/public_html/doctor/wpmudev-doctor.php
 file-eval:
   check: File_Contents
   options:

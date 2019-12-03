@@ -547,3 +547,66 @@ class WPMUDEV_Doctor_Constants extends runcommand\Doctor\Checks\Check {
 
 	}
 }
+
+/**
+ * Log Scanner.
+ */
+class WPMUDEV_Doctor_Log_Scan extends runcommand\Doctor\Checks\Check {
+
+	protected static $skip_names = array(
+		'changelog',
+		'CHANGELOG',
+		'readme',
+		'README',
+		'license',
+		'LICENSE',
+		'copying',
+		'COPYING',
+		'contributors',
+		'CONTRIBUTORS',
+		'license.commercial',
+		'LICENSE.COMMERCIAL',
+	);
+
+	protected static $accept_names = array( 'error_log' );
+
+	protected static $extensions = array(
+		'log',
+		'txt',
+	);
+
+	protected static $size_limit = 10485750; // 10MB
+
+	public function run() {
+
+		$directory = new RecursiveDirectoryIterator( ABSPATH, RecursiveDirectoryIterator::SKIP_DOTS );
+		$iterator  = new RecursiveIteratorIterator( $directory, RecursiveIteratorIterator::CHILD_FIRST );
+
+		$limit = (int) self::$size_limit;
+
+		foreach ( $iterator as $file ) {
+			$filename = $file->getBasename( '.' . $file->getExtension() );
+			if ( ! in_array( $filename, self::$skip_names, true ) ) {
+				if ( in_array( $file->getExtension(), self::$extensions, true ) || in_array( $filename, self::$accept_names, true ) ) {
+					if ( $file->getSize() > $limit ) {
+						$files_array[] = str_replace( ABSPATH, '', $file->getPathname() ) . '(' . self::format_bytes( $file->getSize() ) . ')';
+					}
+				}
+			}
+		}
+
+		if ( ! empty( $files_array ) ) {
+			$this->set_status( 'warning' );
+			$this->set_message( implode( ', ', $files_array ) . '.' );
+		} else {
+			$this->set_status( 'success' );
+			$this->set_message( 'No big log files detected (limit ' . self::format_bytes( $limit ) . ').' );
+		}
+	}
+
+	private static function format_bytes( $size, $precision = 2 ) {
+		$base     = log( $size, 1024 );
+		$suffixes = array( '', 'kb', 'mb', 'g', 't' );
+		return round( pow( 1024, $base - floor( $base ) ), $precision ) . $suffixes[ floor( $base ) ];
+	}
+}
