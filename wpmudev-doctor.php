@@ -101,7 +101,13 @@ class WPMUDEV_Doctor_Core_Stats extends runcommand\Doctor\Checks\Check {
  */
 class WPMUDEV_Doctor_Plugin_Stats extends runcommand\Doctor\Checks\Check {
 
+	protected static $threshold_active = 80;
+
+	protected static $threshold_inactive_percent = 40;
+
 	public function run() {
+		$this->set_status( 'success' );
+
 		$cmd_options = array(
 			'return'     => true,
 			'parse'      => 'json',
@@ -117,8 +123,17 @@ class WPMUDEV_Doctor_Plugin_Stats extends runcommand\Doctor\Checks\Check {
 		$dropin_plugins         = WP_CLI::runcommand( 'plugin list --status=dropin --format=count', $cmd_options );
 		$total_active_plugins   = $active_plugins + $active_network_plugins;
 
-		$this->set_status( 'success' );
-		$this->set_message( $total_plugins . ' Total, ' . $total_active_plugins . ' Active, ' . $inactive_plugins . ' Inactive, ' . $mu_plugins . ' Must-use, ' . $dropin_plugins . ' Dropins.' );
+		if ( $total_active_plugins > self::$threshold_active ) {
+			$this->set_status( 'warning' );
+		}
+
+		$inactive_percent = (int) self::$threshold_inactive_percent;
+
+		if ( ( $inactive_plugins / ( $inactive_plugins + $total_active_plugins ) ) > ( $inactive_percent / 100 ) ) {
+			$this->set_status( 'warning' );
+		}
+
+		$this->set_message( $total_plugins . ' Total, ' . $total_active_plugins . ' Active (limit ' . self::$threshold_active . '), ' . $inactive_plugins . ' Inactive (limit ' . self::$threshold_inactive_percent . '%), ' . $mu_plugins . ' Must-use, ' . $dropin_plugins . ' Dropins.' );
 	}
 }
 
