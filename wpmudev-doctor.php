@@ -138,6 +138,60 @@ class WPMUDEV_Doctor_Plugin_Stats extends runcommand\Doctor\Checks\Check {
 }
 
 /**
+ * Checks for WPMUDEV Plugins.
+ */
+class WPMUDEV_Doctor_Plugin_Check extends runcommand\Doctor\Checks\Check {
+	public function run() {
+		$this->set_status( 'success' );
+		$message = 'All plugins are installed and activated.';
+
+		$cmd_options = array(
+			'return'     => true,
+			'parse'      => 'json',
+			'launch'     => false,
+			'exit_error' => true,
+		);
+
+		$errors = array();
+
+		$dash_active         = WP_CLI::runcommand( 'plugin list --format=count  --name=wpmudev-updates --status=active', $cmd_options );
+		$dash_network_active = WP_CLI::runcommand( 'plugin list --format=count  --name=wpmudev-updates --status=active-network', $cmd_options );
+		$dash_count          = $dash_active + $dash_network_active;
+
+		if ( 0 === $dash_count ) {
+			$errors[] = 'WPMU DEV Dashboard';
+		}
+
+		$hb_active            = WP_CLI::runcommand( 'plugin list --format=count --name=hummingbird-performance --status=active', $cmd_options );
+		$hb_network_active    = WP_CLI::runcommand( 'plugin list --format=count --name=hummingbird-performance --status=active-network', $cmd_options );
+		$hbpro_active         = WP_CLI::runcommand( 'plugin list --format=count --name=wp-hummingbird --status=active', $cmd_options );
+		$hbpro_network_active = WP_CLI::runcommand( 'plugin list --format=count --name=wp-hummingbird --status=active-network', $cmd_options );
+		$hb_count             = $hb_active + $hb_network_active + $hbpro_active + $hbpro_network_active;
+
+		if ( 0 === $hb_count ) {
+			$errors[] = 'Hummingbird';
+		}
+
+		$def_active            = WP_CLI::runcommand( 'plugin list --format=count --name=defender-security --status=active', $cmd_options );
+		$def_network_active    = WP_CLI::runcommand( 'plugin list --format=count --name=defender-security --status=active-network', $cmd_options );
+		$defpro_active         = WP_CLI::runcommand( 'plugin list --format=count --name=wp-defender --status=active', $cmd_options );
+		$defpro_network_active = WP_CLI::runcommand( 'plugin list --format=count --name=wp-defender --status=active-network', $cmd_options );
+		$def_count             = $def_active + $def_network_active + $defpro_active + $defpro_network_active;
+
+		if ( 0 === $def_count ) {
+			$errors[] = 'Defender';
+		}
+
+		if ( ! empty( $errors ) ) {
+			$this->set_status( 'warning' );
+			$message = 'Not installed or activated: ' . implode( ', ', $errors );
+		}
+
+		$this->set_message( $message );
+	}
+}
+
+/**
  * Checks for Theme stats.
  */
 class WPMUDEV_Doctor_Theme_Stats extends runcommand\Doctor\Checks\Check {

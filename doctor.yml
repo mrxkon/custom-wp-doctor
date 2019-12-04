@@ -7,6 +7,9 @@ wpmudev-plugin-stats:
   require: /var/web/site/public_html/doctor/wpmudev-doctor.php
 plugin-update:
   check: Plugin_Update
+wpmudev-plugin-check:
+  class: WPMUDEV_Doctor_Plugin_Check
+  require: /var/web/site/public_html/doctor/wpmudev-doctor.php
 wpmudev-theme-stats:
   class: WPMUDEV_Doctor_Theme_Stats
   require: /var/web/site/public_html/doctor/wpmudev-doctor.php
