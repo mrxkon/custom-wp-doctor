@@ -292,37 +292,48 @@ if ( defined( 'WP_CLI' ) && WP_CLI ) {
 
 	/**
 	 * Checks for Role stats.
+	 *
+	 * command: wp doctor check wpmudev-roles-stats --config=PATH
 	 */
 	class WPMUDEV_Doctor_Role_Stats extends runcommand\Doctor\Checks\Check {
+		// WP_CLI::runcommand options.
+		private static $runcommand_options = array(
+			'return'     => true,
+			'parse'      => 'json',
+			'launch'     => false,
+			'exit_error' => true,
+		);
 
+		// Main function.
 		public function run() {
-			$cmd_options = array(
-				'return'     => true,
-				'parse'      => 'json',
-				'launch'     => false,
-				'exit_error' => true,
-			);
+			// Set status as success by default.
+			$this->set_status( 'success' );
 
-			$roles     = WP_CLI::runcommand( 'role list --format=json', $cmd_options );
+			// Initialize roles array.
 			$role_list = array();
 
+			// Gather roles.
+			$roles = WP_CLI::runcommand( 'role list --format=json', self::$runcommand_options );
+
 			if ( ! empty( $roles ) ) {
-				$this->set_status( 'success' );
 				foreach ( $roles as $role ) {
-					$count_users = WP_CLI::runcommand( 'user list --format=count --role=' . $role['role'], $cmd_options );
+					$count_users = WP_CLI::runcommand( 'user list --format=count --role=' . $role['role'], self::$runcommand_options );
 					array_push( $role_list, $count_users . ' ' . $role['role'] );
 				}
 
 				$role_result = implode( ', ', $role_list ) . '.';
 			} else {
+				// If there are no roles set status as error.
 				$this->set_status( 'error' );
 				$role_result = 'No roles found.';
 			}
 
+			// Check for Super Admins if Multisite.
 			if ( is_multisite() ) {
-				$super_admins = WP_CLI::runcommand( 'super-admin list --format=count', $cmd_options );
+				$super_admins = WP_CLI::runcommand( 'super-admin list --format=count', self::$runcommand_options );
 
 				if ( 0 === $super_admins ) {
+					// If there are no Super Admins set status as error.
 					$this->set_status( 'error' );
 					$super_admin = '0 Super Admins, ';
 				} else {
@@ -330,6 +341,7 @@ if ( defined( 'WP_CLI' ) && WP_CLI ) {
 				}
 			}
 
+			// Return message.
 			$this->set_message( $super_admin . $role_result );
 		}
 	}
