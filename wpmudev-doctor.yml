@@ -2,6 +2,8 @@
 wpmudev-core-stats:
   class: WPMUDEV_Doctor_Core_Stats
   require: wpmudev-doctor.php
+language-update:
+  check: Language_Update
 wpmudev-plugin-stats:
   class: WPMUDEV_Doctor_Plugin_Stats
   require: wpmudev-doctor.php
@@ -13,8 +15,6 @@ wpmudev-plugin-check:
 wpmudev-theme-stats:
   class: WPMUDEV_Doctor_Theme_Stats
   require: wpmudev-doctor.php
-theme-update:
-  check: Theme_Update
 wpmudev-user-stats:
   class: WPMUDEV_Doctor_User_Stats
   require: wpmudev-doctor.php
@@ -53,5 +53,3 @@ cache-flush:
   check: Cache_Flush
 php-in-upload:
   check: PHP_In_Upload
-language-update:
-  check: Language_Update

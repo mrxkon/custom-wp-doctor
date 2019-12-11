@@ -240,10 +240,47 @@ if ( defined( 'WP_CLI' ) && WP_CLI ) {
 			// Set status as success by default.
 			$this->set_status( 'success' );
 
-			$total_themes = WP_CLI::runcommand( 'theme list --format=count', self::$runcommand_options );
+			// Initialize theme_updates array.
+			$theme_updates = array();
+
+			// Initialize theme count.
+			$count = 0;
+
+			// Initialize updates message.
+			$updates = '';
+
+			// Gather the theme list.
+			$themes = WP_CLI::runcommand( 'theme list --format=json', self::$runcommand_options );
+
+			// Set the total count of themes.
+			$total_themes = count( $themes );
+			$count        = $total_themes . ' Total.';
+
+			// Check themes for updates.
+			foreach ( $themes as $theme ) {
+				if ( 'available' === $theme['update'] ) {
+					$theme_updates[] = $theme['name'];
+				}
+			}
+
+			// If themes have updates set status to warning and adjust the return message.
+			if ( ! empty( $theme_updates ) ) {
+				$this->set_status( 'warning' );
+				if ( 1 === count( $theme_updates ) ) {
+					$txt = '1 update';
+				} else {
+					$txt = count( $theme_updates ) . ' updates';
+				}
+				$updates = $txt . ' available for: ' . implode( ', ', $theme_updates ) . '.';
+			}
+
+			// Set status as error if there are no themes found.
+			if ( 0 === $total_themes ) {
+				$this->set_status( 'error' );
+			}
 
 			// Return message.
-			$this->set_message( $total_themes . ' Total.' );
+			$this->set_message( $count . ' ' . $updates );
 		}
 	}
 
