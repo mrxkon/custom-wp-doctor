@@ -15,11 +15,21 @@
 if ( defined( 'WP_CLI' ) && WP_CLI ) {
 	/**
 	 * Checks for Core stats.
+	 *
+	 * command: wp doctor check wpmudev-core-stats --config=PATH
 	 */
 	class WPMUDEV_Doctor_Core_Stats extends runcommand\Doctor\Checks\Check {
+		// WP_CLI::runcommand options.
+		private static $runcommand_options = array(
+			'return'     => true,
+			'parse'      => 'json',
+			'launch'     => false,
+			'exit_error' => true,
+		);
 
+		// Main function.
 		public function run() {
-			// Core updates.
+			// Check if Core needs updates.
 			ob_start();
 			WP_CLI::run_command( array( 'core', 'check-update' ), array( 'format' => 'json' ) );
 			$ret = ob_get_clean();
@@ -40,27 +50,23 @@ if ( defined( 'WP_CLI' ) && WP_CLI ) {
 			}
 
 			if ( $has_minor ) {
+				// If it's a minor update set as a warning.
 				$this->set_status( 'warning' );
 				$core = 'A new minor version is available.';
 			} elseif ( $has_major ) {
-				$this->set_status( 'warning' );
+				// If it's a major update set as an error.
+				$this->set_status( 'error' );
 				$core = 'A new major version is available.';
 			} else {
 				$this->set_status( 'success' );
 				$core = 'WordPress is at the latest version.';
 			}
 
-			// Multisite information.
+			// Check if this is a Multisite.
 			if ( is_multisite() ) {
-				$cmd_options = array(
-					'return'     => true,
-					'parse'      => 'json',
-					'launch'     => false,
-					'exit_error' => true,
-				);
+				$total_sites = WP_CLI::runcommand( 'site list --format=count', self::$runcommand_options );
 
-				$total_sites = WP_CLI::runcommand( 'site list --format=count', $cmd_options );
-
+				// Check if Multisite is Subdirectory or Subdomain.
 				if ( defined( 'SUBDOMAIN_INSTALL' ) && SUBDOMAIN_INSTALL ) {
 					$wpmu_type = 'Subdomain Multisite';
 				} else {
@@ -72,15 +78,8 @@ if ( defined( 'WP_CLI' ) && WP_CLI ) {
 				$multisite_stats = 'Single Site';
 			}
 
-			// Public option.
-			$cmd_options = array(
-				'return'     => true,
-				'parse'      => 'json',
-				'launch'     => false,
-				'exit_error' => true,
-			);
-
-			$public = WP_CLI::runcommand( 'option get blog_public', $cmd_options );
+			// Check if the this is a Public site.
+			$public = WP_CLI::runcommand( 'option get blog_public', self::$runcommand_options );
 
 			if ( 1 === $public ) {
 				$public_msg = 'Public.';
@@ -88,53 +87,59 @@ if ( defined( 'WP_CLI' ) && WP_CLI ) {
 				$public_msg = 'Not Public.';
 			}
 
-			if ( 1 !== $public ) {
-				$this->set_status( 'warning' );
-			}
-
-			// Message
+			// Return message.
 			$this->set_message( $core . ' ' . $multisite_stats . ', ' . $public_msg );
 		}
 	}
 
 	/**
 	 * Checks for Plugin stats.
+	 *
+	 * command: wp doctor check wpmudev-plugin-stats --config=PATH
 	 */
 	class WPMUDEV_Doctor_Plugin_Stats extends runcommand\Doctor\Checks\Check {
+		// Limit of active plugins.
+		private static $limit_active = 80;
 
-		protected static $threshold_active = 80;
+		// Percentage limi of inactive plugins ( against total ).
+		private static $limit_inactive_percent = 40;
 
-		protected static $threshold_inactive_percent = 40;
+		// WP_CLI::runcommand options.
+		private static $runcommand_options = array(
+			'return'     => true,
+			'parse'      => 'json',
+			'launch'     => false,
+			'exit_error' => true,
+		);
 
+		// Main function.
 		public function run() {
+			// Set status as success by default.
 			$this->set_status( 'success' );
 
-			$cmd_options = array(
-				'return'     => true,
-				'parse'      => 'json',
-				'launch'     => false,
-				'exit_error' => true,
-			);
-
-			$total_plugins          = WP_CLI::runcommand( 'plugin list --format=count', $cmd_options );
-			$active_plugins         = WP_CLI::runcommand( 'plugin list --status=active --format=count', $cmd_options );
-			$active_network_plugins = WP_CLI::runcommand( 'plugin list --status=active-network --format=count', $cmd_options );
-			$inactive_plugins       = WP_CLI::runcommand( 'plugin list --status=inactive --format=count', $cmd_options );
-			$mu_plugins             = WP_CLI::runcommand( 'plugin list --status=must-use --format=count', $cmd_options );
-			$dropin_plugins         = WP_CLI::runcommand( 'plugin list --status=dropin --format=count', $cmd_options );
+			// Gather various plugin stats.
+			$total_plugins          = WP_CLI::runcommand( 'plugin list --format=count', self::$runcommand_options );
+			$active_plugins         = WP_CLI::runcommand( 'plugin list --status=active --format=count', self::$runcommand_options );
+			$active_network_plugins = WP_CLI::runcommand( 'plugin list --status=active-network --format=count', self::$runcommand_options );
+			$inactive_plugins       = WP_CLI::runcommand( 'plugin list --status=inactive --format=count', self::$runcommand_options );
+			$mu_plugins             = WP_CLI::runcommand( 'plugin list --status=must-use --format=count', self::$runcommand_options );
+			$dropin_plugins         = WP_CLI::runcommand( 'plugin list --status=dropin --format=count', self::$runcommand_options );
 			$total_active_plugins   = $active_plugins + $active_network_plugins;
 
-			if ( $total_active_plugins > self::$threshold_active ) {
+			// Set warning if total plugins is over the limit.
+			if ( $total_active_plugins > self::$limit_active ) {
 				$this->set_status( 'warning' );
 			}
 
-			$inactive_percent = (int) self::$threshold_inactive_percent;
+			// Set warning if inactive plugins is over the percentage limit.
+			$inactive_percent = (int) self::$limit_inactive_percent;
 
-			if ( ( $inactive_plugins / ( $inactive_plugins + $total_active_plugins ) ) > ( $inactive_percent / 100 ) ) {
+			if ( ( $inactive_plugins / $total_plugins ) > ( $inactive_percent / 100 ) ) {
 				$this->set_status( 'warning' );
 			}
 
-			$this->set_message( $total_plugins . ' Total, ' . $total_active_plugins . ' Active (limit ' . self::$threshold_active . '), ' . $inactive_plugins . ' Inactive (limit ' . self::$threshold_inactive_percent . '%), ' . $mu_plugins . ' Must-use, ' . $dropin_plugins . ' Dropins.' );
+			// Return message.
+			$this->set_message( $total_plugins . ' Total, ' . $total_active_plugins . ' Active (limit ' . self::$limit_active . '), ' . $inactive_plugins . ' Inactive (limit ' . self::$limit_inactive_percent . '%), ' . $mu_plugins . ' Must-use, ' . $dropin_plugins . ' Dropins.' );
 		}
 	}
 
