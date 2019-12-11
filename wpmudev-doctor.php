@@ -556,25 +556,31 @@ if ( defined( 'WP_CLI' ) && WP_CLI ) {
 
 	/**
 	 * Verify Core Checksums.
+	 *
+	 * command: wp doctor check wpmudev-verify-core-checksums --config=PATH
 	 */
 	class WPMUDEV_Doctor_Verify_Core_Checksums extends runcommand\Doctor\Checks\Check {
-
-		public function __construct( $options = array() ) {
-			parent::__construct( $options );
-			$this->set_when( 'before_wp_load' );
-		}
-
+		// Main function.
 		public function run() {
+			// Set status as success by default.
+			$this->set_status( 'success' );
+
+			// Initialize the return message.
+			$message = '';
+
+			// Gather information on checksums.
 			$checksums = WP_CLI::launch_self( 'core verify-checksums', array(), array(), false, true );
 
+			// If no errors are found adjust the return message.
 			if ( 0 === $checksums->return_code && empty( $checksums->stderr ) ) {
-				$this->set_status( 'success' );
 				$message = 'WordPress verifies against its checksums.';
 			} else {
+				// Set status as error if there are checksum issues & adjust the return message.
 				$this->set_status( 'error' );
-				$message = 'Some files did not verify against their checksum or should not exist.';
+				$message = 'Issues have been found. Please run "wp core verify-checksums".';
 			}
 
+			// Return message.
 			$this->set_message( $message );
 		}
 	}
