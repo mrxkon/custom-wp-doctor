@@ -374,6 +374,9 @@ if ( defined( 'WP_CLI' ) && WP_CLI ) {
 			// Set status as success by default.
 			$this->set_status( 'success' );
 
+			// Initialize super admins message.
+			$super_admin = '';
+
 			// Initialize roles array.
 			$role_list = array();
 
@@ -672,6 +675,9 @@ if ( defined( 'WP_CLI' ) && WP_CLI ) {
 
 		// Main function.
 		public function run() {
+			// Initialize duplicate message.
+			$dup_msg = '';
+
 			// Count crons.
 			$crons      = WP_CLI::runcommand( 'cron event list --format=json', self::$runcommand_options );
 			$cron_count = count( $crons );
