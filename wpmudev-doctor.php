@@ -454,13 +454,22 @@ if ( defined( 'WP_CLI' ) && WP_CLI ) {
 
 	/**
 	 * Checks for TTFB.
+	 *
+	 * command: wp doctor check wpmudev-ttfb --config=PATH
 	 */
 	class WPMUDEV_Doctor_TTFB extends runcommand\Doctor\Checks\Check {
-
+		// Main function.
 		public function run() {
+			// Set status as success by default.
+			$this->set_status( 'success' );
 
+			// Initialize message.
+			$message = '';
+
+			// Get the site url.
 			$url = get_site_url();
 
+			// Gather the stats via cURL.
 			$curl = curl_init();
 
 			curl_setopt( $curl, CURLOPT_URL, $url );
@@ -474,12 +483,16 @@ if ( defined( 'WP_CLI' ) && WP_CLI ) {
 			curl_close( $curl );
 
 			if ( 0 == $curl_info['starttransfer_time'] ) {
+				// Set status as warning if there's no response & adjust the return message.
 				$this->set_status( 'warning' );
-				$this->set_message( 'Could not retrieve Time to first byte.' );
+				$message = 'Could not retrieve Time to first byte.';
 			} else {
-				$this->set_status( 'success' );
-				$this->set_message( $curl_info['starttransfer_time'] . 's Time to first byte (TTFB).' );
+				// Adjust the return message.
+				$message = $curl_info['starttransfer_time'] . 's Time to first byte (TTFB).';
 			}
+
+			// Return message.
+			$this->set_message( $message );
 		}
 	}
 
