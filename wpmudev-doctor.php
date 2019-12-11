@@ -633,18 +633,19 @@ if ( defined( 'WP_CLI' ) && WP_CLI ) {
 		protected static $size_limit = 10485750; // 10MB
 
 		public function run() {
-
 			$directory = new RecursiveDirectoryIterator( ABSPATH, RecursiveDirectoryIterator::SKIP_DOTS );
 			$iterator  = new RecursiveIteratorIterator( $directory, RecursiveIteratorIterator::CHILD_FIRST );
 
 			$limit = (int) self::$size_limit;
 
 			foreach ( $iterator as $file ) {
-				$filename = $file->getBasename( '.' . $file->getExtension() );
-				if ( ! in_array( $filename, self::$skip_names, true ) ) {
-					if ( in_array( $file->getExtension(), self::$extensions, true ) || in_array( $filename, self::$accept_names, true ) ) {
-						if ( $file->getSize() > $limit ) {
-							$files_array[] = str_replace( ABSPATH, '', $file->getPathname() ) . '(' . self::format_bytes( $file->getSize() ) . ')';
+				if ( is_file( $file ) ) {
+					$filename = $file->getBasename( '.' . $file->getExtension() );
+					if ( ! in_array( $filename, self::$skip_names, true ) ) {
+						if ( in_array( $file->getExtension(), self::$extensions, true ) || in_array( $filename, self::$accept_names, true ) ) {
+							if ( $file->getSize() > $limit ) {
+								$files_array[] = str_replace( ABSPATH, '', $file->getPathname() ) . '(' . self::format_bytes( $file->getSize() ) . ')';
+							}
 						}
 					}
 				}
