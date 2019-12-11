@@ -223,20 +223,26 @@ if ( defined( 'WP_CLI' ) && WP_CLI ) {
 
 	/**
 	 * Checks for Theme stats.
+	 *
+	 * command: wp doctor check wpmudev-theme-stats --config=PATH
 	 */
 	class WPMUDEV_Doctor_Theme_Stats extends runcommand\Doctor\Checks\Check {
+		// WP_CLI::runcommand options.
+		private static $runcommand_options = array(
+			'return'     => true,
+			'parse'      => 'json',
+			'launch'     => false,
+			'exit_error' => true,
+		);
 
+		// Main function.
 		public function run() {
-			$cmd_options = array(
-				'return'     => true,
-				'parse'      => 'json',
-				'launch'     => false,
-				'exit_error' => true,
-			);
-
-			$total_themes = WP_CLI::runcommand( 'theme list --format=count', $cmd_options );
-
+			// Set status as success by default.
 			$this->set_status( 'success' );
+
+			$total_themes = WP_CLI::runcommand( 'theme list --format=count', self::$runcommand_options );
+
+			// Return message.
 			$this->set_message( $total_themes . ' Total.' );
 		}
 	}
