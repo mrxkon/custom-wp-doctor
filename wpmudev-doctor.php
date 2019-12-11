@@ -249,30 +249,44 @@ if ( defined( 'WP_CLI' ) && WP_CLI ) {
 
 	/**
 	 * Checks for User stats.
+	 *
+	 * command: wp doctor check wpmudev-user-stats --config=PATH
 	 */
 	class WPMUDEV_Doctor_User_Stats extends runcommand\Doctor\Checks\Check {
+		// WP_CLI::runcommand options.
+		private static $runcommand_options = array(
+			'return'     => true,
+			'parse'      => 'json',
+			'launch'     => false,
+			'exit_error' => true,
+		);
 
+		// Main function.
 		public function run() {
-			$cmd_options = array(
-				'return'     => true,
-				'parse'      => 'json',
-				'launch'     => false,
-				'exit_error' => true,
-			);
+			// Set status as success by default.
+			$this->set_status( 'success' );
 
+			// Initialize message.
+			$message = '';
+
+			// Gather user information.
 			if ( is_multisite() ) {
-				$total_users = WP_CLI::runcommand( 'user list --format=count --network', $cmd_options );
+				$total_users = WP_CLI::runcommand( 'user list --format=count --network', self::$runcommand_options );
 			} else {
-				$total_users = WP_CLI::runcommand( 'user list --format=count', $cmd_options );
+				$total_users = WP_CLI::runcommand( 'user list --format=count', self::$runcommand_options );
 			}
 
+			// If there are users adjust the message.
 			if ( 0 !== $total_users ) {
-				$this->set_status( 'success' );
-				$this->set_message( $total_users . ' Total.' );
+				$message = $total_users . ' Total.';
 			} else {
+				// If there are no users adjust the message and set status as error.
 				$this->set_status( 'error' );
-				$this->set_message( 'No Users found.' );
+				$message = 'No Users found.';
 			}
+
+			// Return message.
+			$this->set_message( $message );
 		}
 	}
 
