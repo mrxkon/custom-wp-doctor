@@ -7,8 +7,6 @@ language-update:
 wpmudev-plugin-stats:
   class: WPMUDEV_Doctor_Plugin_Stats
   require: wpmudev-doctor.php
-plugin-update:
-  check: Plugin_Update
 wpmudev-plugin-check:
   class: WPMUDEV_Doctor_Plugin_Check
   require: wpmudev-doctor.php

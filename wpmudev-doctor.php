@@ -117,8 +117,18 @@ if ( defined( 'WP_CLI' ) && WP_CLI ) {
 			// Set status as success by default.
 			$this->set_status( 'success' );
 
+			// Initialize plugin_updates array.
+			$plugin_updates = array();
+
+			// Initialize theme count.
+			$total_plugins = 0;
+
+			// Initialize updates message.
+			$updates = '';
+
 			// Gather various plugin stats.
-			$total_plugins          = WP_CLI::runcommand( 'plugin list --format=count', self::$runcommand_options );
+			$plugins                = WP_CLI::runcommand( 'plugin list --format=json', self::$runcommand_options );
+			$total_plugins          = count( $plugins );
 			$active_plugins         = WP_CLI::runcommand( 'plugin list --status=active --format=count', self::$runcommand_options );
 			$active_network_plugins = WP_CLI::runcommand( 'plugin list --status=active-network --format=count', self::$runcommand_options );
 			$inactive_plugins       = WP_CLI::runcommand( 'plugin list --status=inactive --format=count', self::$runcommand_options );
@@ -138,8 +148,26 @@ if ( defined( 'WP_CLI' ) && WP_CLI ) {
 				$this->set_status( 'warning' );
 			}
 
+			// Check plugins for updates.
+			foreach ( $plugins as $plugin ) {
+				if ( 'available' === $plugin['update'] ) {
+					$plugin_updates[] = $plugin['name'];
+				}
+			}
+
+			// If plugins have updates set status to warning and adjust the return message.
+			if ( ! empty( $plugin_updates ) ) {
+				$this->set_status( 'warning' );
+				if ( 1 === count( $plugin_updates ) ) {
+					$txt = '1 update';
+				} else {
+					$txt = count( $plugin_updates ) . ' updates';
+				}
+				$updates = $txt . ' available for: ' . implode( ', ', $plugin_updates ) . '.';
+			}
+
 			// Return message.
-			$this->set_message( $total_plugins . ' Total, ' . $total_active_plugins . ' Active (limit ' . self::$limit_active . '), ' . $inactive_plugins . ' Inactive (limit ' . self::$limit_inactive_percent . '%), ' . $mu_plugins . ' Must-use, ' . $dropin_plugins . ' Dropins.' );
+			$this->set_message( $total_plugins . ' Total, ' . $total_active_plugins . ' Active (limit ' . self::$limit_active . '), ' . $inactive_plugins . ' Inactive (limit ' . self::$limit_inactive_percent . '%), ' . $mu_plugins . ' Must-use, ' . $dropin_plugins . ' Dropins. ' . $updates );
 		}
 	}
 
