@@ -430,7 +430,7 @@ if ( defined( 'WP_CLI' ) && WP_CLI ) {
 				$final_data = array();
 
 				foreach ( $data as $key => $value ) {
-					array_push( $final_data, $data[ $key ]['option_name'] . '(' . self::format_bytes( $data[ $key ]['size_bytes'] ) . ')' );
+					array_push( $final_data, $data[ $key ]['option_name'] . ' (' . self::format_bytes( $data[ $key ]['size_bytes'] ) . ')' );
 				}
 
 				// Adjust the return message if the check fails.
@@ -592,10 +592,10 @@ if ( defined( 'WP_CLI' ) && WP_CLI ) {
 	 */
 	class WPMUDEV_Doctor_Cron_Stats extends runcommand\Doctor\Checks\Check {
 		// Limit of crons in total.
-		protected static $limit_count = 50;
+		private static $limit_count = 50;
 
 		// Limit of duplicate crons.
-		protected static $dup_limit_count = 10;
+		private static $dup_limit_count = 10;
 
 		// WP_CLI::runcommand options.
 		private static $runcommand_options = array(
@@ -650,7 +650,7 @@ if ( defined( 'WP_CLI' ) && WP_CLI ) {
 	 */
 	class WPMUDEV_Doctor_Constants extends runcommand\Doctor\Checks\Check {
 		// Array of undefined constants.
-		protected static $undefined_constants = array(
+		private static $undefined_constants = array(
 			'WP_DEBUG',
 			'SAVEQUERIES',
 			'DISABLE_WP_CRON',
@@ -668,7 +668,7 @@ if ( defined( 'WP_CLI' ) && WP_CLI ) {
 		);
 
 		// Array of predefined constants.
-		protected static $predefined_constants = array(
+		private static $predefined_constants = array(
 			'WP_CONTENT_DIR',
 			'WP_CONTENT_URL',
 			'FS_CHMOD_DIR',
@@ -756,10 +756,13 @@ if ( defined( 'WP_CLI' ) && WP_CLI ) {
 
 	/**
 	 * Log Scanner.
+	 *
+	 * command: wp doctor check wpmudev-log-scan --config=PATH
 	 */
 	class WPMUDEV_Doctor_Log_Scan extends runcommand\Doctor\Checks\Check {
 
-		protected static $skip_names = array(
+		// List of known filenames to skip.
+		private static $skip_names = array(
 			'changelog',
 			'CHANGELOG',
 			'readme',
@@ -774,22 +777,35 @@ if ( defined( 'WP_CLI' ) && WP_CLI ) {
 			'LICENSE.COMMERCIAL',
 		);
 
-		protected static $accept_names = array( 'error_log' );
+		// List of known files to accept without extension.
+		private static $accept_names = array( 'error_log' );
 
-		protected static $extensions = array(
+		// List of extensions to test against.
+		private static $extensions = array(
 			'log',
 			'txt',
 		);
 
-		protected static $size_limit = 10485750; // 10MB
+		// Size limit in bytes.
+		private static $size_limit = 10485750; // 10MB
 
+		// Main function.
 		public function run() {
-			$directory = new RecursiveDirectoryIterator( ABSPATH, RecursiveDirectoryIterator::SKIP_DOTS );
-			$iterator  = new RecursiveIteratorIterator( $directory, RecursiveIteratorIterator::CHILD_FIRST );
-
+			// Set the limit to integer.
 			$limit = (int) self::$size_limit;
 
-			$files_array = array();
+			// Set status as success by default.
+			$this->set_status( 'success' );
+
+			// Initialize the return message.
+			$message = 'No big log files detected (limit ' . self::format_bytes( $limit ) . ').';
+
+			// Initialize log_files array.
+			$log_files = array();
+
+			// Go through the folders and files to gather information.
+			$directory = new RecursiveDirectoryIterator( ABSPATH, RecursiveDirectoryIterator::SKIP_DOTS );
+			$iterator  = new RecursiveIteratorIterator( $directory, RecursiveIteratorIterator::CHILD_FIRST );
 
 			foreach ( $iterator as $file ) {
 				if ( is_file( $file ) ) {
@@ -797,22 +813,24 @@ if ( defined( 'WP_CLI' ) && WP_CLI ) {
 					if ( ! in_array( $filename, self::$skip_names, true ) ) {
 						if ( in_array( $file->getExtension(), self::$extensions, true ) || in_array( $filename, self::$accept_names, true ) ) {
 							if ( $file->getSize() > $limit ) {
-								$files_array[] = str_replace( ABSPATH, '', $file->getPathname() ) . ' (' . self::format_bytes( $file->getSize() ) . ')';
+								$log_files[] = str_replace( ABSPATH, '', $file->getPathname() ) . ' (' . self::format_bytes( $file->getSize() ) . ')';
 							}
 						}
 					}
 				}
 			}
 
-			if ( ! empty( $files_array ) ) {
+			// If the log_files array is not empty adjust the return message and set status to warning.
+			if ( ! empty( $log_files ) ) {
 				$this->set_status( 'warning' );
-				$this->set_message( implode( ', ', $files_array ) . '.' );
-			} else {
-				$this->set_status( 'success' );
-				$this->set_message( 'No big log files detected (limit ' . self::format_bytes( $limit ) . ').' );
+				$message = implode( ', ', $log_files ) . '.';
 			}
+
+			// Return message.
+			$this->set_message( $message );
 		}
 
+		// Change bytes into a human readable format.
 		private static function format_bytes( $size, $precision = 2 ) {
 			$base     = log( $size, 1024 );
 			$suffixes = array( '', 'kb', 'mb', 'g', 't' );
