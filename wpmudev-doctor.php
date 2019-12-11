@@ -162,7 +162,7 @@ if ( defined( 'WP_CLI' ) && WP_CLI ) {
 			// Set status as success by default.
 			$this->set_status( 'success' );
 
-			// Set default success message.
+			// Set default success return message.
 			$message = 'WPMU DEV Dashboard, Hummingbird, Defender & Smush are installed and activated.';
 
 			// Initialize errors array.
@@ -210,7 +210,7 @@ if ( defined( 'WP_CLI' ) && WP_CLI ) {
 				$errors[] = 'Smush';
 			}
 
-			// If there are errors set status to warning and alter the response message.
+			// If there are errors set status to warning and adjust the return message.
 			if ( ! empty( $errors ) ) {
 				$this->set_status( 'warning' );
 				$message = 'Not installed or activated: ' . implode( ', ', $errors );
@@ -266,7 +266,7 @@ if ( defined( 'WP_CLI' ) && WP_CLI ) {
 			// Set status as success by default.
 			$this->set_status( 'success' );
 
-			// Initialize message.
+			// Initialize the return message.
 			$message = '';
 
 			// Gather user information.
@@ -276,11 +276,11 @@ if ( defined( 'WP_CLI' ) && WP_CLI ) {
 				$total_users = WP_CLI::runcommand( 'user list --format=count', self::$runcommand_options );
 			}
 
-			// If there are users adjust the message.
+			// If there are users adjust the return message.
 			if ( 0 !== $total_users ) {
 				$message = $total_users . ' Total.';
 			} else {
-				// If there are no users adjust the message and set status as error.
+				// If there are no users adjust the return message and set status as error.
 				$this->set_status( 'error' );
 				$message = 'No Users found.';
 			}
@@ -398,7 +398,7 @@ if ( defined( 'WP_CLI' ) && WP_CLI ) {
 			// Set status as success by default.
 			$this->set_status( 'success' );
 
-			// Initialize message.
+			// Initialize the return message.
 			$message = '';
 
 			// Get total bytes of autoloaded options.
@@ -463,7 +463,7 @@ if ( defined( 'WP_CLI' ) && WP_CLI ) {
 			// Set status as success by default.
 			$this->set_status( 'success' );
 
-			// Initialize message.
+			// Initialize the return message.
 			$message = '';
 
 			// Get the site url.
@@ -498,15 +498,29 @@ if ( defined( 'WP_CLI' ) && WP_CLI ) {
 
 	/**
 	 * Checks for Cache headers.
+	 *
+	 * command: wp doctor check wpmudev-cache-headers --config=PATH
 	 */
 	class WPMUDEV_Doctor_Cache_Headers extends runcommand\Doctor\Checks\Check {
-
+		// Main function.
 		public function run() {
-			$url           = get_site_url();
-			$response      = wp_remote_get( $url );
-			$headers       = $this->headers_to_array( wp_remote_retrieve_headers( $response ), 'data' );
+			// Set status as success by default.
+			$this->set_status( 'success' );
+
+			// Initialize the return message.
+			$message = '';
+
+			// Get the site url.
+			$url = get_site_url();
+
+			// Gather headers.
+			$response = wp_remote_get( $url );
+			$headers  = self::headers_to_array( wp_remote_retrieve_headers( $response ), 'data' );
+
+			// Initialize found_headers array.
 			$found_headers = array();
 
+			// Set up the found headers.
 			if ( array_key_exists( 'hummingbird-cache', $headers ) ) {
 				$found_headers[] = 'Hummingbird';
 			}
@@ -519,16 +533,21 @@ if ( defined( 'WP_CLI' ) && WP_CLI ) {
 				$found_headers[] = 'Cloudflare';
 			}
 
-			if ( ! empty( $found_headers ) ) {
-				$this->set_status( 'success' );
-				$this->set_message( implode( ', ', $found_headers ) . '.' );
-			} else {
+			// If there are no headers set status to warning and adjust the return message.
+			if ( empty( $found_headers ) ) {
 				$this->set_status( 'warning' );
-				$this->set_message( 'Could not find any cache headers.' );
+				$message = 'Could not find any cache headers.';
+			} else {
+				// Adjust the return message.
+				$message = implode( ', ', $found_headers ) . '.';
 			}
+
+			// Return message.
+			$this->set_message( $message );
 		}
 
-		private function headers_to_array( $obj, $prop ) {
+		// Converts headers to array.
+		private static function headers_to_array( $obj, $prop ) {
 			$array  = (array) $obj;
 			$prefix = chr( 0 ) . '*' . chr( 0 );
 			return $array[ $prefix . $prop ];
