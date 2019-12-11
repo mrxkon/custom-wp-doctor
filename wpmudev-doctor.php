@@ -638,13 +638,15 @@ if ( defined( 'WP_CLI' ) && WP_CLI ) {
 
 			$limit = (int) self::$size_limit;
 
+			$files_array = array();
+
 			foreach ( $iterator as $file ) {
 				if ( is_file( $file ) ) {
 					$filename = $file->getBasename( '.' . $file->getExtension() );
 					if ( ! in_array( $filename, self::$skip_names, true ) ) {
 						if ( in_array( $file->getExtension(), self::$extensions, true ) || in_array( $filename, self::$accept_names, true ) ) {
 							if ( $file->getSize() > $limit ) {
-								$files_array[] = str_replace( ABSPATH, '', $file->getPathname() ) . '(' . self::format_bytes( $file->getSize() ) . ')';
+								$files_array[] = str_replace( ABSPATH, '', $file->getPathname() ) . ' (' . self::format_bytes( $file->getSize() ) . ')';
 							}
 						}
 					}
