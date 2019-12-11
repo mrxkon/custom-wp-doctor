@@ -330,6 +330,7 @@ if ( defined( 'WP_CLI' ) && WP_CLI ) {
 
 			// Check for Super Admins if Multisite.
 			if ( is_multisite() ) {
+				// Gather Super Admins.
 				$super_admins = WP_CLI::runcommand( 'super-admin list --format=count', self::$runcommand_options );
 
 				if ( 0 === $super_admins ) {
@@ -377,27 +378,44 @@ if ( defined( 'WP_CLI' ) && WP_CLI ) {
 
 	/**
 	 * Checks for Autoload options to not be over 900kb.
+	 *
+	 * command: wp doctor check wpmudev-autoload-report --config=PATH
 	 */
 	class WPMUDEV_Doctor_Autoload_Report extends runcommand\Doctor\Checks\Check {
+		// Limit in bytes.
+		private static $limit_bytes = 900 * 1024;
 
-		private static $threshold_bytes = 900 * 1024;
+		// WP_CLI::runcommand options.
+		private static $runcommand_options = array(
+			'return'     => true,
+			'parse'      => 'json',
+			'launch'     => false,
+			'exit_error' => true,
+		);
 
+		// Main function.
 		public function run() {
-			$cmd_options = array(
-				'return'     => true,
-				'parse'      => 'json',
-				'launch'     => false,
-				'exit_error' => true,
-			);
+			// Set status as success by default.
+			$this->set_status( 'success' );
 
-			$total_bytes = WP_CLI::runcommand( 'option list --autoload=on --format=total_bytes', $cmd_options );
+			// Initialize message.
+			$message = '';
 
-			$human_threshold = self::format_bytes( self::$threshold_bytes );
-			$human_total     = self::format_bytes( $total_bytes );
+			// Get total bytes of autoloaded options.
+			$total_bytes = WP_CLI::runcommand( 'option list --autoload=on --format=total_bytes', self::$runcommand_options );
 
-			if ( self::$threshold_bytes < $total_bytes ) {
-				$data = WP_CLI::runcommand( 'option list --fields=option_name,size_bytes --autoload=on --format=json', $cmd_options );
+			// Convert bytes to readable format.
+			$human_limit = self::format_bytes( self::$limit_bytes );
+			$human_total = self::format_bytes( $total_bytes );
 
+			if ( self::$limit_bytes < $total_bytes ) {
+				// Set status as a warning.
+				$this->set_status( 'warning' );
+
+				// Gather autoloaded options.
+				$data = WP_CLI::runcommand( 'option list --fields=option_name,size_bytes --autoload=on --format=json', self::$runcommand_options );
+
+				// Sort options by size.
 				usort(
 					$data,
 					function( $a, $b ) {
@@ -405,22 +423,28 @@ if ( defined( 'WP_CLI' ) && WP_CLI ) {
 					}
 				);
 
+				// Collect only the 3 first options.
 				$data = array_slice( $data, 0, 3 );
 
+				// Initialize final_data array.
 				$final_data = array();
 
 				foreach ( $data as $key => $value ) {
 					array_push( $final_data, $data[ $key ]['option_name'] . '(' . self::format_bytes( $data[ $key ]['size_bytes'] ) . ')' );
 				}
 
-				$this->set_status( 'warning' );
-				$this->set_message( "{$human_total} Total (limit {$human_threshold}). 3 biggest options: " . implode( ', ', $final_data ) . '.' );
+				// Adjust the return message if the check fails.
+				$message = "{$human_total} Total (limit {$human_limit}). 3 biggest options: " . implode( ', ', $final_data ) . '.';
 			} else {
-				$this->set_status( 'success' );
-				$this->set_message( "{$human_total} Total (limit {$human_threshold})." );
+				// Adjust the return message if the check passes.
+				$message = "{$human_total} Total (limit {$human_limit}).";
 			}
+
+			// Return message.
+			$this->set_message( $message );
 		}
 
+		// Change bytes into a human readable format.
 		private static function format_bytes( $size, $precision = 2 ) {
 			$base     = log( $size, 1024 );
 			$suffixes = array( '', 'kb', 'mb', 'g', 't' );
