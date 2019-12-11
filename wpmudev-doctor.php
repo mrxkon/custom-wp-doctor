@@ -348,22 +348,29 @@ if ( defined( 'WP_CLI' ) && WP_CLI ) {
 
 	/**
 	 * Checks for Posts stats.
+	 *
+	 * command: wp doctor check wpmudev-posts-stats --config=PATH
 	 */
 	class WPMUDEV_Doctor_Posts_Stats extends runcommand\Doctor\Checks\Check {
+		// WP_CLI::runcommand options.
+		private static $runcommand_options = array(
+			'return'     => true,
+			'parse'      => 'json',
+			'launch'     => false,
+			'exit_error' => true,
+		);
 
+		// Main function.
 		public function run() {
-			$cmd_options = array(
-				'return'     => true,
-				'parse'      => 'json',
-				'launch'     => false,
-				'exit_error' => true,
-			);
-
-			$posts       = WP_CLI::runcommand( 'post list --post_type=post --format=count', $cmd_options );
-			$pages       = WP_CLI::runcommand( 'post list --post_type=page --format=count', $cmd_options );
-			$attachments = WP_CLI::runcommand( 'post list --post_type=attachment --format=count', $cmd_options );
-
+			// Set status as success by default.
 			$this->set_status( 'success' );
+
+			// Gather post stats.
+			$posts       = WP_CLI::runcommand( 'post list --post_type=post --format=count', self::$runcommand_options );
+			$pages       = WP_CLI::runcommand( 'post list --post_type=page --format=count', self::$runcommand_options );
+			$attachments = WP_CLI::runcommand( 'post list --post_type=attachment --format=count', self::$runcommand_options );
+
+			// Return message.
 			$this->set_message( $posts . ' Posts, ' . $pages . ' Pages, ' . $attachments . ' Attachments.' );
 		}
 	}
