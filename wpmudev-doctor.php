@@ -483,7 +483,7 @@ if ( defined( 'WP_CLI' ) && WP_CLI ) {
 			curl_close( $curl );
 
 			if ( 0 == $curl_info['starttransfer_time'] ) {
-				// Set status as warning if there's no response & adjust the return message.
+				// Set status as warning if there's no response and adjust the return message.
 				$this->set_status( 'warning' );
 				$message = 'Could not retrieve Time to first byte.';
 			} else {
@@ -575,7 +575,7 @@ if ( defined( 'WP_CLI' ) && WP_CLI ) {
 			if ( 0 === $checksums->return_code && empty( $checksums->stderr ) ) {
 				$message = 'WordPress verifies against its checksums.';
 			} else {
-				// Set status as error if there are checksum issues & adjust the return message.
+				// Set status as error if there are checksum issues and adjust the return message.
 				$this->set_status( 'error' );
 				$message = 'Issues have been found. Please run "wp core verify-checksums".';
 			}
@@ -586,27 +586,33 @@ if ( defined( 'WP_CLI' ) && WP_CLI ) {
 	}
 
 	/**
-	 * Cron Checks.
+	 * Cron statistics.
+	 *
+	 * command: wp doctor check wpmudev-cron-stats --config=PATH
 	 */
 	class WPMUDEV_Doctor_Cron_Stats extends runcommand\Doctor\Checks\Check {
+		// Limit of crons in total.
+		protected static $limit_count = 50;
 
-		protected static $threshold_count = 50;
+		// Limit of duplicate crons.
+		protected static $dup_limit_count = 10;
 
-		protected static $dup_threshold_count = 10;
+		// WP_CLI::runcommand options.
+		private static $runcommand_options = array(
+			'return'     => true,
+			'parse'      => 'json',
+			'launch'     => false,
+			'exit_error' => true,
+		);
 
+		// Main function.
 		public function run() {
 			// Count crons.
-			$cmd_options = array(
-				'return'     => true,
-				'parse'      => 'json',
-				'launch'     => false,
-				'exit_error' => true,
-			);
-
-			$crons      = WP_CLI::runcommand( 'cron event list --format=json', $cmd_options );
+			$crons      = WP_CLI::runcommand( 'cron event list --format=json', self::$runcommand_options );
 			$cron_count = count( $crons );
 
-			if ( $cron_count >= self::$threshold_count ) {
+			// Adjust the status if the crons exceed the limit.
+			if ( $cron_count >= self::$limit_count ) {
 				$this->set_status( 'warning' );
 			} else {
 				$this->set_status( 'success' );
@@ -621,26 +627,29 @@ if ( defined( 'WP_CLI' ) && WP_CLI ) {
 					$job_counts[ $job['hook'] ] = 0;
 				}
 				$job_counts[ $job['hook'] ]++;
-				if ( $job_counts[ $job['hook'] ] >= self::$dup_threshold_count ) {
+				if ( $job_counts[ $job['hook'] ] >= self::$dup_limit_count ) {
 					$excess_duplicates = true;
 				}
 			}
 
+			// Adjust the status to warning if the duplicate crons exceed the limit.
 			if ( $excess_duplicates ) {
 				$this->set_status( 'warning' );
-				$dup_msg = ' Detected ' . self::$dup_threshold_count . ' or more of the same cron job.';
+				$dup_msg = ' Detected ' . self::$dup_limit_count . ' or more of the same cron job.';
 			}
 
-			$this->set_message( $cron_count . ' Total (limit ' . self::$threshold_count . ').' . $dup_msg );
-
+			// Return message.
+			$this->set_message( $cron_count . ' Total (limit ' . self::$limit_count . ').' . $dup_msg );
 		}
 	}
 
 	/**
 	 * Constants Checks.
+	 *
+	 * command: wp doctor check wpmudev-constants --config=PATH
 	 */
 	class WPMUDEV_Doctor_Constants extends runcommand\Doctor\Checks\Check {
-
+		// Array of undefined constants.
 		protected static $undefined_constants = array(
 			'WP_DEBUG',
 			'SAVEQUERIES',
@@ -658,6 +667,7 @@ if ( defined( 'WP_CLI' ) && WP_CLI ) {
 			'FTP_SSL',
 		);
 
+		// Array of predefined constants.
 		protected static $predefined_constants = array(
 			'WP_CONTENT_DIR',
 			'WP_CONTENT_URL',
@@ -665,14 +675,24 @@ if ( defined( 'WP_CLI' ) && WP_CLI ) {
 			'FS_CHMOD_FILE',
 		);
 
+		// Main function.
 		public function run() {
+			// Set status as success by default.
 			$this->set_status( 'success' );
 
-			$message         = 'All constants are ok.';
-			$content_dir     = ABSPATH . 'wp-content';
-			$content_url     = rtrim( get_site_url(), '/' ) . '/wp-content';
+			// Initialize the return message.
+			$message = 'All constants are ok.';
+
+			// Set default wp-content path.
+			$content_dir = ABSPATH . 'wp-content';
+
+			// Set default wp-content url.
+			$content_url = rtrim( get_site_url(), '/' ) . '/wp-content';
+
+			// Initialize wrong_constants array.
 			$wrong_constants = array();
 
+			// Gather information about constants.
 			foreach ( self::$undefined_constants as $constant ) {
 				if ( defined( $constant ) ) {
 					if ( 'SAVEQUERIES' === $constant || 'WP_DEBUG' === $constant ) {
@@ -713,6 +733,7 @@ if ( defined( 'WP_CLI' ) && WP_CLI ) {
 				}
 			}
 
+			// If wrong_constants is not empty set status to warning and adjust the return message.
 			if ( ! empty( $wrong_constants ) ) {
 				$this->set_status( 'warning' );
 				$message = '';
@@ -728,8 +749,8 @@ if ( defined( 'WP_CLI' ) && WP_CLI ) {
 				}
 			}
 
+			// Return message.
 			$this->set_message( $message );
-
 		}
 	}
 
