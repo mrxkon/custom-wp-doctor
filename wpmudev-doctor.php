@@ -1,4 +1,4 @@
-<?php
+<?php // phpcs:ignore
 
 /**
  * Combined `wp doctor` checks for WPMU DEV Hosting.
@@ -551,7 +551,7 @@ if ( defined( 'WP_CLI' ) && WP_CLI ) {
 			$curl_info = curl_getinfo( $curl );
 			curl_close( $curl );
 
-			if ( 0 == $curl_info['starttransfer_time'] ) {
+			if ( 0 == $curl_info['starttransfer_time'] ) { // phpcs:ignore
 				// Set status as warning if there's no response and adjust the return message.
 				$this->set_status( 'warning' );
 				$message = 'Could not retrieve Time to first byte.';
