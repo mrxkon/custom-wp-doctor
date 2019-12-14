@@ -1,4 +1,4 @@
-name: WordPress Coding Standards - Master
+name: WordPress Coding Standards - Master Branch
 on:
   push:
     branches:
