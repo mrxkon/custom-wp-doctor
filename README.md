@@ -2,7 +2,7 @@
 
 ## Customized `wp doctor` command & checks for WPMU DEV Hosting.
 
-### Props to original contributors of [wp-cli/doctor-command](https://github.com/wp-cli/doctor-command) as some parts of the code have been used on the modified commands.
+### Props to all contributors of [wp-cli/doctor-command](https://github.com/wp-cli/doctor-command) as some parts of the code have been used on the modified commands.
 
 This was created to fill a "gap" that I felt existed for easier usage & to display as much information as possible in a more compact way when running only a `wp doctor` command instead of having to always run `wp doctor check --all --config=PATH`
 
@@ -25,6 +25,11 @@ This was created to fill a "gap" that I felt existed for easier usage & to displ
 
 ```
 <?php // phpcs:ignore
+
+// Check that the file is not accessed directly.
+if ( ! defined( 'ABSPATH' ) ) {
+	die( 'We\'re sorry, but you can not directly access this file.' );
+}
 
 // Wrapper command for "wp doctor"
 if ( defined( 'WP_CLI' ) && WP_CLI ) {
