@@ -29,7 +29,7 @@
 /**
  * Props to all contributors of https://github.com/wp-cli/doctor-command .
  *
- * For installations instructions please visit: https://github.com/mrxkon/wpmudev-doctor/ .
+ * For installation instructions visit: https://github.com/mrxkon/wpmudev-doctor/ .
  */
 
 // Check that the file is not accessed directly.
