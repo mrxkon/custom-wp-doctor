@@ -6,15 +6,15 @@
 
 This was created to fill a "gap" that I felt existed for easier usage & to display as much information as possible in a more compact way when running only a `wp doctor` command instead of having to always run `wp doctor check --all --config=PATH`
 
-![WPCSMaster](https://github.com/mrxkon/wpmudev-doctor/workflows/WordPress%20Coding%20Standards%20-%20Master%20Branch/badge.svg) ![WPCSDevelop](https://github.com/mrxkon/wpmudev-doctor/workflows/WordPress%20Coding%20Standards%20-%20Develop%20Branch/badge.svg)
-
-![PHPCompatMaster](https://github.com/mrxkon/wpmudev-doctor/workflows/PHP%20Compatibility%207.0+%20-%20Master%20Branch/badge.svg) ![PHPCompatDevelop](https://github.com/mrxkon/wpmudev-doctor/workflows/PHP%20Compatibility%207.0+%20-%20Develop%20Branch/badge.svg)
+![WPCSMaster](https://github.com/mrxkon/wpmudev-doctor/workflows/WordPress%20Coding%20Standards%20-%20Master%20Branch/badge.svg) ![PHPCompatMaster](https://github.com/mrxkon/wpmudev-doctor/workflows/PHP%20Compatibility%207.0+%20-%20Master%20Branch/badge.svg)
 
 [![My Website](https://img.shields.io/badge/My-Website-orange.svg)](https://xkon.gr)  [![WordPress Profile](https://img.shields.io/badge/WordPress-Profile-blue.svg)](https://profiles.wordpress.org/xkon)
 
 [![Built for WordPress](https://img.shields.io/badge/built%20for-WordPress-blue)](https://wordpress.org) [![Built for WP-CLI](https://img.shields.io/badge/built%20for-WP--CLI-3d681d)](https://wp-cli.org/) [![Built for WPMU DEV](https://img.shields.io/badge/built%20for-WPMU%20DEV-blue)](https://premium.wpmudev.org/)
 [![License: GPL v2](https://img.shields.io/badge/License-GPL%20v2+-red)](http://www.gnu.org/licenses/gpl-2.0.html)
 
+---
+### Pull requests are welcome to `develop` branch.
 ---
 
 ## How to install
