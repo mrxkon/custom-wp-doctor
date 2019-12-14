@@ -10,8 +10,32 @@
  */
 
 /**
- * Props to original contributors of https://github.com/wp-cli/doctor-command .
+ * Copyright (C) 2019 Konstantinos Xenos (https://xkon.gr).
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 2 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program. If not, see https://www.gnu.org/licenses/.
  */
+
+/**
+ * Props to all contributors of https://github.com/wp-cli/doctor-command .
+ *
+ * For installation instructions visit: https://github.com/mrxkon/wpmudev-doctor/ .
+ */
+
+// Check that the file is not accessed directly.
+if ( ! defined( 'ABSPATH' ) ) {
+	die( 'We\'re sorry, but you can not directly access this file.' );
+}
 
 if ( defined( 'WP_CLI' ) && WP_CLI ) {
 	/**
