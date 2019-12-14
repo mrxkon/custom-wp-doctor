@@ -3,7 +3,8 @@
 /**
  * Combined `wp doctor` checks for WPMU DEV Hosting.
  *
- * Author:      Xenos Konstantinos
+ * Author:      Konstantinos Xenos
+ * Author URI:  https://xkon.gr
  * License:     GPLv2 or later
  * License URI: https://www.gnu.org/licenses/gpl-2.0.html
  */
