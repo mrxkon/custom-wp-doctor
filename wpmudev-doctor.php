@@ -1,10 +1,15 @@
 <?php // phpcs:ignore
 
 /**
- * Combined `wp doctor` checks for WPMU DEV Hosting.
+ * Combined `wp doctor` checks created originally for WPMU DEV Hosting.
+ * Feel free to use, enhance, alter them as needed :).
+ *
+ * This was created to fill a "gap" that I felt existed for easier usage
+ * & to display as much information as possible in a more compact way.
  *
  * Author:      Konstantinos Xenos
  * Author URI:  https://xkon.gr
+ * Repo URI:    https://github.com/mrxkon/wpmudev-doctor/
  * License:     GPLv2 or later
  * License URI: https://www.gnu.org/licenses/gpl-2.0.html
  */
