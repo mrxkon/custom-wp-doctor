@@ -1,5 +1,8 @@
-name: PHPCompat/WPCS - Develop PR
+name: PHPCS/Develop
 on:
+  push:
+    branches: 
+      - develop
   pull_request:
     branches:
       - develop
