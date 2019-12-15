@@ -39,6 +39,13 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 if ( defined( 'WP_CLI' ) && WP_CLI ) {
 	/**
+	 * Custom defines.
+	 */
+	define( 'WPMUDEV_DOCTOR_SUCCESS', 'success' );
+	define( 'WPMUDEV_DOCTOR_WARNING', 'warning' );
+	define( 'WPMUDEV_DOCTOR_ERROR', 'error' );
+
+	/**
 	 * Checks for Core stats.
 	 *
 	 * command: wp doctor check wpmudev-core-stats --config=PATH
@@ -47,7 +54,7 @@ if ( defined( 'WP_CLI' ) && WP_CLI ) {
 		// Main function.
 		public function run() {
 			// Set status as success by default.
-			$this->set_status( 'success' );
+			$this->set_status( WPMUDEV_DOCTOR_SUCCESS );
 
 			// Set default core message.
 			$core = 'WordPress is at the latest version.';
@@ -73,11 +80,11 @@ if ( defined( 'WP_CLI' ) && WP_CLI ) {
 
 			if ( $has_minor && $has_major || $has_major ) {
 				// If both updates exist or if there is a major set as an error.
-				$this->set_status( 'error' );
+				$this->set_status( WPMUDEV_DOCTOR_ERROR );
 				$core = 'A new major version is available.';
 			} elseif ( $has_minor ) {
 				// If it's a minor update set as a warning.
-				$this->set_status( 'warning' );
+				$this->set_status( WPMUDEV_DOCTOR_WARNING );
 				$core = 'A new minor version is available.';
 			}
 
@@ -126,7 +133,7 @@ if ( defined( 'WP_CLI' ) && WP_CLI ) {
 		// Main function.
 		public function run() {
 			// Set status as success by default.
-			$this->set_status( 'success' );
+			$this->set_status( WPMUDEV_DOCTOR_SUCCESS );
 
 			// Initialize plugin_updates array.
 			$plugin_updates = array();
@@ -149,14 +156,14 @@ if ( defined( 'WP_CLI' ) && WP_CLI ) {
 
 			// Set warning if total plugins is over the limit.
 			if ( $total_active_plugins > self::$limit_active ) {
-				$this->set_status( 'warning' );
+				$this->set_status( WPMUDEV_DOCTOR_WARNING );
 			}
 
 			// Set warning if inactive plugins is over the percentage limit.
 			$inactive_percent = (int) self::$limit_inactive_percent;
 
 			if ( ( $inactive_plugins / $total_plugins ) > ( $inactive_percent / 100 ) ) {
-				$this->set_status( 'warning' );
+				$this->set_status( WPMUDEV_DOCTOR_WARNING );
 			}
 
 			// Check plugins for updates.
@@ -168,7 +175,7 @@ if ( defined( 'WP_CLI' ) && WP_CLI ) {
 
 			// If plugins have updates set status to warning and adjust the return message.
 			if ( ! empty( $plugin_updates ) ) {
-				$this->set_status( 'warning' );
+				$this->set_status( WPMUDEV_DOCTOR_WARNING );
 				if ( 1 === count( $plugin_updates ) ) {
 					$txt = '1 update';
 				} else {
@@ -191,7 +198,7 @@ if ( defined( 'WP_CLI' ) && WP_CLI ) {
 		// Main function.
 		public function run() {
 			// Set status as success by default.
-			$this->set_status( 'success' );
+			$this->set_status( WPMUDEV_DOCTOR_SUCCESS );
 
 			// Set default success return message.
 			$message = 'WPMU DEV Dashboard, Hummingbird, Defender & Smush are installed and activated.';
@@ -243,7 +250,7 @@ if ( defined( 'WP_CLI' ) && WP_CLI ) {
 
 			// If there are errors set status to warning and adjust the return message.
 			if ( ! empty( $errors ) ) {
-				$this->set_status( 'warning' );
+				$this->set_status( WPMUDEV_DOCTOR_WARNING );
 				$message = 'Not installed or activated: ' . implode( ', ', $errors );
 			}
 
@@ -261,7 +268,7 @@ if ( defined( 'WP_CLI' ) && WP_CLI ) {
 		// Main function.
 		public function run() {
 			// Set status as success by default.
-			$this->set_status( 'success' );
+			$this->set_status( WPMUDEV_DOCTOR_SUCCESS );
 
 			// Initialize theme_updates array.
 			$theme_updates = array();
@@ -288,7 +295,7 @@ if ( defined( 'WP_CLI' ) && WP_CLI ) {
 
 			// If themes have updates set status to warning and adjust the return message.
 			if ( ! empty( $theme_updates ) ) {
-				$this->set_status( 'warning' );
+				$this->set_status( WPMUDEV_DOCTOR_WARNING );
 				if ( 1 === count( $theme_updates ) ) {
 					$txt = '1 update';
 				} else {
@@ -299,7 +306,7 @@ if ( defined( 'WP_CLI' ) && WP_CLI ) {
 
 			// Set status as error if there are no themes found.
 			if ( 0 === $total_themes ) {
-				$this->set_status( 'error' );
+				$this->set_status( WPMUDEV_DOCTOR_ERROR );
 			}
 
 			// Return message.
@@ -316,7 +323,7 @@ if ( defined( 'WP_CLI' ) && WP_CLI ) {
 		// Main function.
 		public function run() {
 			// Set status as success by default.
-			$this->set_status( 'success' );
+			$this->set_status( WPMUDEV_DOCTOR_SUCCESS );
 
 			// Initialize the return message.
 			$message = '';
@@ -333,7 +340,7 @@ if ( defined( 'WP_CLI' ) && WP_CLI ) {
 				$message = $total_users . ' Total.';
 			} else {
 				// If there are no users adjust the return message and set status as error.
-				$this->set_status( 'error' );
+				$this->set_status( WPMUDEV_DOCTOR_ERROR );
 				$message = 'No Users found.';
 			}
 
@@ -351,7 +358,7 @@ if ( defined( 'WP_CLI' ) && WP_CLI ) {
 		// Main function.
 		public function run() {
 			// Set status as success by default.
-			$this->set_status( 'success' );
+			$this->set_status( WPMUDEV_DOCTOR_SUCCESS );
 
 			// Initialize super admins message.
 			$super_admin = '';
@@ -371,7 +378,7 @@ if ( defined( 'WP_CLI' ) && WP_CLI ) {
 				$role_result = implode( ', ', $role_list ) . '.';
 			} else {
 				// If there are no roles set status as error.
-				$this->set_status( 'error' );
+				$this->set_status( WPMUDEV_DOCTOR_ERROR );
 				$role_result = 'No roles found.';
 			}
 
@@ -382,7 +389,7 @@ if ( defined( 'WP_CLI' ) && WP_CLI ) {
 
 				if ( 0 === $super_admins ) {
 					// If there are no Super Admins set status as error.
-					$this->set_status( 'error' );
+					$this->set_status( WPMUDEV_DOCTOR_ERROR );
 					$super_admin = '0 Super Admins, ';
 				} else {
 					$super_admin = $super_admins . ' Super Admins, ';
@@ -403,7 +410,7 @@ if ( defined( 'WP_CLI' ) && WP_CLI ) {
 		// Main function.
 		public function run() {
 			// Set status as success by default.
-			$this->set_status( 'success' );
+			$this->set_status( WPMUDEV_DOCTOR_SUCCESS );
 
 			// Gather post stats.
 			$posts       = WP_CLI::runcommand( 'post list --post_type=post --format=count', WPMUDEV_Doctor_Helper::runcommand_options() );
@@ -427,7 +434,7 @@ if ( defined( 'WP_CLI' ) && WP_CLI ) {
 		// Main function.
 		public function run() {
 			// Set status as success by default.
-			$this->set_status( 'success' );
+			$this->set_status( WPMUDEV_DOCTOR_SUCCESS );
 
 			// Initialize the return message.
 			$message = '';
@@ -441,7 +448,7 @@ if ( defined( 'WP_CLI' ) && WP_CLI ) {
 
 			if ( self::$limit_bytes < $total_bytes ) {
 				// Set status as a warning.
-				$this->set_status( 'warning' );
+				$this->set_status( WPMUDEV_DOCTOR_WARNING );
 
 				// Gather autoloaded options.
 				$data = WP_CLI::runcommand( 'option list --fields=option_name,size_bytes --autoload=on --format=json', WPMUDEV_Doctor_Helper::runcommand_options() );
@@ -485,7 +492,7 @@ if ( defined( 'WP_CLI' ) && WP_CLI ) {
 		// Main function.
 		public function run() {
 			// Set status as success by default.
-			$this->set_status( 'success' );
+			$this->set_status( WPMUDEV_DOCTOR_SUCCESS );
 
 			// Initialize the return message.
 			$message = '';
@@ -508,7 +515,7 @@ if ( defined( 'WP_CLI' ) && WP_CLI ) {
 
 			if ( 0 == $curl_info['starttransfer_time'] ) { // phpcs:ignore
 				// Set status as warning if there's no response and adjust the return message.
-				$this->set_status( 'warning' );
+				$this->set_status( WPMUDEV_DOCTOR_WARNING );
 				$message = 'Could not retrieve Time to first byte.';
 			} else {
 				// Adjust the return message.
@@ -529,7 +536,7 @@ if ( defined( 'WP_CLI' ) && WP_CLI ) {
 		// Main function.
 		public function run() {
 			// Set status as success by default.
-			$this->set_status( 'success' );
+			$this->set_status( WPMUDEV_DOCTOR_SUCCESS );
 
 			// Initialize the return message.
 			$message = '';
@@ -559,7 +566,7 @@ if ( defined( 'WP_CLI' ) && WP_CLI ) {
 
 			// If there are no headers set status to warning and adjust the return message.
 			if ( empty( $found_headers ) ) {
-				$this->set_status( 'warning' );
+				$this->set_status( WPMUDEV_DOCTOR_WARNING );
 				$message = 'Could not find any cache headers.';
 			} else {
 				// Adjust the return message.
@@ -587,7 +594,7 @@ if ( defined( 'WP_CLI' ) && WP_CLI ) {
 		// Main function.
 		public function run() {
 			// Set status as success by default.
-			$this->set_status( 'success' );
+			$this->set_status( WPMUDEV_DOCTOR_SUCCESS );
 
 			// Initialize the return message.
 			$message = '';
@@ -600,7 +607,7 @@ if ( defined( 'WP_CLI' ) && WP_CLI ) {
 				$message = 'WordPress verifies against its checksums.';
 			} else {
 				// Set status as error if there are checksum issues and adjust the return message.
-				$this->set_status( 'error' );
+				$this->set_status( WPMUDEV_DOCTOR_ERROR );
 				$message = 'Issues have been found. Please run "wp core verify-checksums".';
 			}
 
@@ -632,9 +639,9 @@ if ( defined( 'WP_CLI' ) && WP_CLI ) {
 
 			// Adjust the status if the crons exceed the limit.
 			if ( $cron_count >= self::$limit_count ) {
-				$this->set_status( 'warning' );
+				$this->set_status( WPMUDEV_DOCTOR_WARNING );
 			} else {
-				$this->set_status( 'success' );
+				$this->set_status( WPMUDEV_DOCTOR_SUCCESS );
 			}
 
 			// Cound duplicates.
@@ -653,7 +660,7 @@ if ( defined( 'WP_CLI' ) && WP_CLI ) {
 
 			// Adjust the status to warning if the duplicate crons exceed the limit.
 			if ( $excess_duplicates ) {
-				$this->set_status( 'warning' );
+				$this->set_status( WPMUDEV_DOCTOR_WARNING );
 				$dup_msg = ' Detected ' . self::$dup_limit_count . ' or more of the same cron job.';
 			}
 
@@ -697,7 +704,7 @@ if ( defined( 'WP_CLI' ) && WP_CLI ) {
 		// Main function.
 		public function run() {
 			// Set status as success by default.
-			$this->set_status( 'success' );
+			$this->set_status( WPMUDEV_DOCTOR_SUCCESS );
 
 			// Initialize the return message.
 			$message = 'All constants are ok.';
@@ -754,7 +761,7 @@ if ( defined( 'WP_CLI' ) && WP_CLI ) {
 
 			// If wrong_constants is not empty set status to warning and adjust the return message.
 			if ( ! empty( $wrong_constants ) ) {
-				$this->set_status( 'warning' );
+				$this->set_status( WPMUDEV_DOCTOR_WARNING );
 				$message = '';
 
 				if ( array_key_exists( 'defined', $wrong_constants ) ) {
@@ -814,7 +821,7 @@ if ( defined( 'WP_CLI' ) && WP_CLI ) {
 			$limit = (int) self::$size_limit;
 
 			// Set status as success by default.
-			$this->set_status( 'success' );
+			$this->set_status( WPMUDEV_DOCTOR_SUCCESS );
 
 			// Initialize the return message.
 			$message = 'No big log files detected (limit ' . WPMUDEV_Doctor_Helper::format_bytes( $limit ) . ').';
@@ -841,7 +848,7 @@ if ( defined( 'WP_CLI' ) && WP_CLI ) {
 
 			// If the log_files array is not empty adjust the return message and set status to warning.
 			if ( ! empty( $log_files ) ) {
-				$this->set_status( 'warning' );
+				$this->set_status( WPMUDEV_DOCTOR_WARNING );
 				$message = implode( ', ', $log_files ) . '.';
 			}
 
