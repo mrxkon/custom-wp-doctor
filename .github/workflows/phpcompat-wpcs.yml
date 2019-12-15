@@ -1,11 +1,13 @@
-name: PHPCS/Develop
+name: PHPCompat/WPCS
 on:
   push:
     branches: 
-      - develop
+      - '*'
+      - '!master'
   pull_request:
     branches:
-      - develop
+      - '*'
+      - '!master'
 jobs:
   build:
     runs-on: ubuntu-latest
