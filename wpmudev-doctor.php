@@ -54,6 +54,12 @@ if ( defined( 'WP_CLI' ) && WP_CLI ) {
 
 		// Main function.
 		public function run() {
+			// Set status as success by default.
+			$this->set_status( 'success' );
+
+			// Set default core message.
+			$core = 'WordPress is at the latest version.';
+
 			// Check if Core needs updates.
 			ob_start();
 			WP_CLI::run_command( array( 'core', 'check-update' ), array( 'format' => 'json' ) );
@@ -64,27 +70,23 @@ if ( defined( 'WP_CLI' ) && WP_CLI ) {
 			$has_major = false;
 
 			foreach ( $updates as $update ) {
-				switch ( $update['update_type'] ) {
-					case 'minor':
-						$has_minor = true;
-						break;
-					case 'major':
-						$has_major = true;
-						break;
+				if ( 'minor' === $update['update_type'] ) {
+					$has_minor = true;
+				}
+
+				if ( 'major' === $update['update_type'] ) {
+					$has_major = true;
 				}
 			}
 
-			if ( $has_minor ) {
+			if ( $has_minor && $has_major || $has_major ) {
+				// If both updates exist or if there is a major set as an error.
+				$this->set_status( 'error' );
+				$core = 'A new major version is available.';
+			} elseif ( $has_minor ) {
 				// If it's a minor update set as a warning.
 				$this->set_status( 'warning' );
 				$core = 'A new minor version is available.';
-			} elseif ( $has_major ) {
-				// If it's a major update set as an error.
-				$this->set_status( 'error' );
-				$core = 'A new major version is available.';
-			} else {
-				$this->set_status( 'success' );
-				$core = 'WordPress is at the latest version.';
 			}
 
 			// Check if this is a Multisite.
@@ -498,8 +500,8 @@ if ( defined( 'WP_CLI' ) && WP_CLI ) {
 			$total_bytes = WP_CLI::runcommand( 'option list --autoload=on --format=total_bytes', self::$runcommand_options );
 
 			// Convert bytes to readable format.
-			$human_limit = self::format_bytes( self::$limit_bytes );
-			$human_total = self::format_bytes( $total_bytes );
+			$human_limit = WPMUDEV_Doctor_Helper::format_bytes( self::$limit_bytes );
+			$human_total = WPMUDEV_Doctor_Helper::format_bytes( $total_bytes );
 
 			if ( self::$limit_bytes < $total_bytes ) {
 				// Set status as a warning.
@@ -523,7 +525,7 @@ if ( defined( 'WP_CLI' ) && WP_CLI ) {
 				$final_data = array();
 
 				foreach ( $data as $key => $value ) {
-					array_push( $final_data, $data[ $key ]['option_name'] . ' (' . self::format_bytes( $data[ $key ]['size_bytes'] ) . ')' );
+					array_push( $final_data, $data[ $key ]['option_name'] . ' (' . WPMUDEV_Doctor_Helper::format_bytes( $data[ $key ]['size_bytes'] ) . ')' );
 				}
 
 				// Adjust the return message if the check fails.
@@ -535,13 +537,6 @@ if ( defined( 'WP_CLI' ) && WP_CLI ) {
 
 			// Return message.
 			$this->set_message( $message );
-		}
-
-		// Change bytes into a human readable format.
-		private static function format_bytes( $size, $precision = 2 ) {
-			$base     = log( $size, 1024 );
-			$suffixes = array( '', 'kb', 'mb', 'g', 't' );
-			return round( pow( 1024, $base - floor( $base ) ), $precision ) . $suffixes[ floor( $base ) ];
 		}
 	}
 
@@ -894,7 +889,7 @@ if ( defined( 'WP_CLI' ) && WP_CLI ) {
 			$this->set_status( 'success' );
 
 			// Initialize the return message.
-			$message = 'No big log files detected (limit ' . self::format_bytes( $limit ) . ').';
+			$message = 'No big log files detected (limit ' . WPMUDEV_Doctor_Helper::format_bytes( $limit ) . ').';
 
 			// Initialize log_files array.
 			$log_files = array();
@@ -909,7 +904,7 @@ if ( defined( 'WP_CLI' ) && WP_CLI ) {
 					if ( ! in_array( $filename, self::$skip_names, true ) ) {
 						if ( in_array( $file->getExtension(), self::$extensions, true ) || in_array( $filename, self::$accept_names, true ) ) {
 							if ( $file->getSize() > $limit ) {
-								$log_files[] = str_replace( ABSPATH, '', $file->getPathname() ) . ' (' . self::format_bytes( $file->getSize() ) . ')';
+								$log_files[] = str_replace( ABSPATH, '', $file->getPathname() ) . ' (' . WPMUDEV_Doctor_Helper::format_bytes( $file->getSize() ) . ')';
 							}
 						}
 					}
@@ -925,9 +920,16 @@ if ( defined( 'WP_CLI' ) && WP_CLI ) {
 			// Return message.
 			$this->set_message( $message );
 		}
+	}
 
-		// Change bytes into a human readable format.
-		private static function format_bytes( $size, $precision = 2 ) {
+	/**
+	 * Helper class.
+	 */
+	class WPMUDEV_Doctor_Helper {
+		/**
+		 * Convert bytes into a human readable format.
+		 */
+		public static function format_bytes( $size, $precision = 2 ) {
 			$base     = log( $size, 1024 );
 			$suffixes = array( '', 'kb', 'mb', 'g', 't' );
 			return round( pow( 1024, $base - floor( $base ) ), $precision ) . $suffixes[ floor( $base ) ];
