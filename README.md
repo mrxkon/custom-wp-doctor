@@ -6,7 +6,7 @@
 
 This was created to fill a "gap" that I felt existed for easier usage & to display as much information as possible in a more compact way when running only a `wp doctor` command instead of having to always run `wp doctor check --all --config=PATH`
 
-![WPCSMaster](https://github.com/mrxkon/wpmudev-doctor/workflows/WordPress%20Coding%20Standards/badge.svg) ![PHPCompatMaster](https://github.com/mrxkon/wpmudev-doctor/workflows/PHP%20Compatibility%207.0+/badge.svg)
+![WordPress Coding Standards](https://github.com/mrxkon/wpmudev-doctor/workflows/WordPress%20Coding%20Standards/badge.svg) ![PHP Compatibility 7.0+](https://github.com/mrxkon/wpmudev-doctor/workflows/PHP%20Compatibility%207.0+/badge.svg) ![PHP Syntax](https://github.com/mrxkon/wpmudev-doctor/workflows/PHP%20Syntax/badge.svg)
 
 [![Quality Gate Status](https://sonarcloud.io/api/project_badges/measure?project=mrxkon_wpmudev-doctor&metric=alert_status)](https://sonarcloud.io/dashboard?id=mrxkon_wpmudev-doctor) [![Security Rating](https://sonarcloud.io/api/project_badges/measure?project=mrxkon_wpmudev-doctor&metric=security_rating)](https://sonarcloud.io/dashboard?id=mrxkon_wpmudev-doctor)
  [![Maintainability Rating](https://sonarcloud.io/api/project_badges/measure?project=mrxkon_wpmudev-doctor&metric=sqale_rating)](https://sonarcloud.io/dashboard?id=mrxkon_wpmudev-doctor) [![Reliability Rating](https://sonarcloud.io/api/project_badges/measure?project=mrxkon_wpmudev-doctor&metric=reliability_rating)](https://sonarcloud.io/dashboard?id=mrxkon_wpmudev-doctor)
