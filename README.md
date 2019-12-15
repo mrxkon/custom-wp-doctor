@@ -6,7 +6,7 @@
 
 This was created to fill a "gap" that I felt existed for easier usage & to display as much information as possible in a more compact way when running only a `wp doctor` command instead of having to always run `wp doctor check --all --config=PATH`
 
-![WPCSMaster](https://github.com/mrxkon/wpmudev-doctor/workflows/WordPress%20Coding%20Standards%20-%20Master%20Branch/badge.svg) ![PHPCompatMaster](https://github.com/mrxkon/wpmudev-doctor/workflows/PHP%20Compatibility%207.0+%20-%20Master%20Branch/badge.svg)
+![WPCSMaster](https://github.com/mrxkon/wpmudev-doctor/workflows/WordPress%20Coding%20Standards/badge.svg) ![PHPCompatMaster](https://github.com/mrxkon/wpmudev-doctor/workflows/PHP%20Compatibility%207.0+/badge.svg)
 
 [![My Website](https://img.shields.io/badge/My-Website-orange.svg)](https://xkon.gr)  [![WordPress Profile](https://img.shields.io/badge/WordPress-Profile-blue.svg)](https://profiles.wordpress.org/xkon)
 
