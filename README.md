@@ -18,7 +18,7 @@ This was created to fill a "gap" that I felt existed for easier usage & to displ
 [![License: GPL v2](https://img.shields.io/badge/License-GPL%20v2+-red)](http://www.gnu.org/licenses/gpl-2.0.html)
 
 ---
-### Pull requests are welcome to `develop` branch.
+### Pull requests are welcome!
 ---
 
 ## How to install
