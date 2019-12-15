@@ -1,4 +1,4 @@
-name: PHPCompat/WPCS
+name: PHP Syntax/PHP 7.0+/WPCS
 on:
   push:
     branches: 
@@ -7,7 +7,6 @@ on:
   pull_request:
     branches:
       - '*'
-      - '!master'
 jobs:
   build:
     runs-on: ubuntu-latest
