@@ -191,7 +191,7 @@ if ( defined( 'WP_CLI' ) && WP_CLI ) {
 		// Main function.
 		public function run() {
 			// Set status as success by default.
-			$this->set_status( 'success' );
+			$this->set_status('success' );
 
 			// Set default success return message.
 			$message = 'WPMU DEV Dashboard, Hummingbird, Defender & Smush are installed and activated.';
@@ -200,7 +200,7 @@ if ( defined( 'WP_CLI' ) && WP_CLI ) {
 			$errors = array();
 
 			// Check for wpmudev-updates (WPMU DEV Dashboard plugin).
-			$dash_active         = WP_CLI::runcommand( 'plugin list --format=count  --name=wpmudev-updates --status=active', WPMUDEV_Doctor_Helper::runcommand_options() );
+			$dash_active         = WP_CLI::runcommand('plugin list --format=count  --name=wpmudev-updates --status=active', WPMUDEV_Doctor_Helper::runcommand_options() );
 			$dash_network_active = WP_CLI::runcommand( 'plugin list --format=count  --name=wpmudev-updates --status=active-network', WPMUDEV_Doctor_Helper::runcommand_options() );
 			$dash_count          = $dash_active + $dash_network_active;
 
@@ -264,7 +264,7 @@ if ( defined( 'WP_CLI' ) && WP_CLI ) {
 			$this->set_status( 'success' );
 
 			// Initialize theme_updates array.
-			$theme_updates = array();
+			$theme_updates =array();
 
 			// Initialize theme count.
 			$count = 0;
