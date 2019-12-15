@@ -44,14 +44,6 @@ if ( defined( 'WP_CLI' ) && WP_CLI ) {
 	 * command: wp doctor check wpmudev-core-stats --config=PATH
 	 */
 	class WPMUDEV_Doctor_Core_Stats extends runcommand\Doctor\Checks\Check {
-		// WP_CLI::runcommand options.
-		private static $runcommand_options = array(
-			'return'     => true,
-			'parse'      => 'json',
-			'launch'     => false,
-			'exit_error' => true,
-		);
-
 		// Main function.
 		public function run() {
 			// Set status as success by default.
@@ -91,7 +83,7 @@ if ( defined( 'WP_CLI' ) && WP_CLI ) {
 
 			// Check if this is a Multisite.
 			if ( is_multisite() ) {
-				$total_sites = WP_CLI::runcommand( 'site list --format=count', self::$runcommand_options );
+				$total_sites = WP_CLI::runcommand( 'site list --format=count', WPMUDEV_Doctor_Helper::runcommand_options() );
 
 				// Check if Multisite is Subdirectory or Subdomain.
 				if ( defined( 'SUBDOMAIN_INSTALL' ) && SUBDOMAIN_INSTALL ) {
@@ -106,7 +98,7 @@ if ( defined( 'WP_CLI' ) && WP_CLI ) {
 			}
 
 			// Check if the this is a Public site.
-			$public = WP_CLI::runcommand( 'option get blog_public', self::$runcommand_options );
+			$public = WP_CLI::runcommand( 'option get blog_public', WPMUDEV_Doctor_Helper::runcommand_options() );
 
 			if ( 1 === $public ) {
 				$public_msg = 'Public.';
@@ -131,14 +123,6 @@ if ( defined( 'WP_CLI' ) && WP_CLI ) {
 		// Percentage limi of inactive plugins ( against total ).
 		private static $limit_inactive_percent = 40;
 
-		// WP_CLI::runcommand options.
-		private static $runcommand_options = array(
-			'return'     => true,
-			'parse'      => 'json',
-			'launch'     => false,
-			'exit_error' => true,
-		);
-
 		// Main function.
 		public function run() {
 			// Set status as success by default.
@@ -154,13 +138,13 @@ if ( defined( 'WP_CLI' ) && WP_CLI ) {
 			$updates = '';
 
 			// Gather various plugin stats.
-			$plugins                = WP_CLI::runcommand( 'plugin list --format=json', self::$runcommand_options );
+			$plugins                = WP_CLI::runcommand( 'plugin list --format=json', WPMUDEV_Doctor_Helper::runcommand_options() );
 			$total_plugins          = count( $plugins );
-			$active_plugins         = WP_CLI::runcommand( 'plugin list --status=active --format=count', self::$runcommand_options );
-			$active_network_plugins = WP_CLI::runcommand( 'plugin list --status=active-network --format=count', self::$runcommand_options );
-			$inactive_plugins       = WP_CLI::runcommand( 'plugin list --status=inactive --format=count', self::$runcommand_options );
-			$mu_plugins             = WP_CLI::runcommand( 'plugin list --status=must-use --format=count', self::$runcommand_options );
-			$dropin_plugins         = WP_CLI::runcommand( 'plugin list --status=dropin --format=count', self::$runcommand_options );
+			$active_plugins         = WP_CLI::runcommand( 'plugin list --status=active --format=count', WPMUDEV_Doctor_Helper::runcommand_options() );
+			$active_network_plugins = WP_CLI::runcommand( 'plugin list --status=active-network --format=count', WPMUDEV_Doctor_Helper::runcommand_options() );
+			$inactive_plugins       = WP_CLI::runcommand( 'plugin list --status=inactive --format=count', WPMUDEV_Doctor_Helper::runcommand_options() );
+			$mu_plugins             = WP_CLI::runcommand( 'plugin list --status=must-use --format=count', WPMUDEV_Doctor_Helper::runcommand_options() );
+			$dropin_plugins         = WP_CLI::runcommand( 'plugin list --status=dropin --format=count', WPMUDEV_Doctor_Helper::runcommand_options() );
 			$total_active_plugins   = $active_plugins + $active_network_plugins;
 
 			// Set warning if total plugins is over the limit.
@@ -204,14 +188,6 @@ if ( defined( 'WP_CLI' ) && WP_CLI ) {
 	 * command: wp doctor check wpmudev-plugin-check --config=PATH
 	 */
 	class WPMUDEV_Doctor_Plugin_Check extends runcommand\Doctor\Checks\Check {
-		// WP_CLI::runcommand options.
-		private static $runcommand_options = array(
-			'return'     => true,
-			'parse'      => 'json',
-			'launch'     => false,
-			'exit_error' => true,
-		);
-
 		// Main function.
 		public function run() {
 			// Set status as success by default.
@@ -224,8 +200,8 @@ if ( defined( 'WP_CLI' ) && WP_CLI ) {
 			$errors = array();
 
 			// Check for wpmudev-updates (WPMU DEV Dashboard plugin).
-			$dash_active         = WP_CLI::runcommand( 'plugin list --format=count  --name=wpmudev-updates --status=active', self::$runcommand_options );
-			$dash_network_active = WP_CLI::runcommand( 'plugin list --format=count  --name=wpmudev-updates --status=active-network', self::$runcommand_options );
+			$dash_active         = WP_CLI::runcommand( 'plugin list --format=count  --name=wpmudev-updates --status=active', WPMUDEV_Doctor_Helper::runcommand_options() );
+			$dash_network_active = WP_CLI::runcommand( 'plugin list --format=count  --name=wpmudev-updates --status=active-network', WPMUDEV_Doctor_Helper::runcommand_options() );
 			$dash_count          = $dash_active + $dash_network_active;
 
 			if ( 0 === $dash_count ) {
@@ -233,10 +209,10 @@ if ( defined( 'WP_CLI' ) && WP_CLI ) {
 			}
 
 			// Check for hummingbird-performance & wp-hummingbird (Hummingbird plugin).
-			$hb_active            = WP_CLI::runcommand( 'plugin list --format=count --name=hummingbird-performance --status=active', self::$runcommand_options );
-			$hb_network_active    = WP_CLI::runcommand( 'plugin list --format=count --name=hummingbird-performance --status=active-network', self::$runcommand_options );
-			$hbpro_active         = WP_CLI::runcommand( 'plugin list --format=count --name=wp-hummingbird --status=active', self::$runcommand_options );
-			$hbpro_network_active = WP_CLI::runcommand( 'plugin list --format=count --name=wp-hummingbird --status=active-network', self::$runcommand_options );
+			$hb_active            = WP_CLI::runcommand( 'plugin list --format=count --name=hummingbird-performance --status=active', WPMUDEV_Doctor_Helper::runcommand_options() );
+			$hb_network_active    = WP_CLI::runcommand( 'plugin list --format=count --name=hummingbird-performance --status=active-network', WPMUDEV_Doctor_Helper::runcommand_options() );
+			$hbpro_active         = WP_CLI::runcommand( 'plugin list --format=count --name=wp-hummingbird --status=active', WPMUDEV_Doctor_Helper::runcommand_options() );
+			$hbpro_network_active = WP_CLI::runcommand( 'plugin list --format=count --name=wp-hummingbird --status=active-network', WPMUDEV_Doctor_Helper::runcommand_options() );
 			$hb_count             = $hb_active + $hb_network_active + $hbpro_active + $hbpro_network_active;
 
 			if ( 0 === $hb_count ) {
@@ -244,10 +220,10 @@ if ( defined( 'WP_CLI' ) && WP_CLI ) {
 			}
 
 			// Check for defender-security & wp-defender (Defender plugin).
-			$def_active            = WP_CLI::runcommand( 'plugin list --format=count --name=defender-security --status=active', self::$runcommand_options );
-			$def_network_active    = WP_CLI::runcommand( 'plugin list --format=count --name=defender-security --status=active-network', self::$runcommand_options );
-			$defpro_active         = WP_CLI::runcommand( 'plugin list --format=count --name=wp-defender --status=active', self::$runcommand_options );
-			$defpro_network_active = WP_CLI::runcommand( 'plugin list --format=count --name=wp-defender --status=active-network', self::$runcommand_options );
+			$def_active            = WP_CLI::runcommand( 'plugin list --format=count --name=defender-security --status=active', WPMUDEV_Doctor_Helper::runcommand_options() );
+			$def_network_active    = WP_CLI::runcommand( 'plugin list --format=count --name=defender-security --status=active-network', WPMUDEV_Doctor_Helper::runcommand_options() );
+			$defpro_active         = WP_CLI::runcommand( 'plugin list --format=count --name=wp-defender --status=active', WPMUDEV_Doctor_Helper::runcommand_options() );
+			$defpro_network_active = WP_CLI::runcommand( 'plugin list --format=count --name=wp-defender --status=active-network', WPMUDEV_Doctor_Helper::runcommand_options() );
 			$def_count             = $def_active + $def_network_active + $defpro_active + $defpro_network_active;
 
 			if ( 0 === $def_count ) {
@@ -255,10 +231,10 @@ if ( defined( 'WP_CLI' ) && WP_CLI ) {
 			}
 
 			// Check for wp-smush-pro & wp-smushit (Smush plugin).
-			$smush_active            = WP_CLI::runcommand( 'plugin list --format=count --name=wp-smushit --status=active', self::$runcommand_options );
-			$smush_network_active    = WP_CLI::runcommand( 'plugin list --format=count --name=wp-smushit --status=active-network', self::$runcommand_options );
-			$smushpro_active         = WP_CLI::runcommand( 'plugin list --format=count --name=wp-smush-pro --status=active', self::$runcommand_options );
-			$smushpro_network_active = WP_CLI::runcommand( 'plugin list --format=count --name=wp-smush-pro --status=active-network', self::$runcommand_options );
+			$smush_active            = WP_CLI::runcommand( 'plugin list --format=count --name=wp-smushit --status=active', WPMUDEV_Doctor_Helper::runcommand_options() );
+			$smush_network_active    = WP_CLI::runcommand( 'plugin list --format=count --name=wp-smushit --status=active-network', WPMUDEV_Doctor_Helper::runcommand_options() );
+			$smushpro_active         = WP_CLI::runcommand( 'plugin list --format=count --name=wp-smush-pro --status=active', WPMUDEV_Doctor_Helper::runcommand_options() );
+			$smushpro_network_active = WP_CLI::runcommand( 'plugin list --format=count --name=wp-smush-pro --status=active-network', WPMUDEV_Doctor_Helper::runcommand_options() );
 			$smush_count             = $smush_active + $smush_network_active + $smushpro_active + $smushpro_network_active;
 
 			if ( 0 === $smush_count ) {
@@ -282,14 +258,6 @@ if ( defined( 'WP_CLI' ) && WP_CLI ) {
 	 * command: wp doctor check wpmudev-theme-stats --config=PATH
 	 */
 	class WPMUDEV_Doctor_Theme_Stats extends runcommand\Doctor\Checks\Check {
-		// WP_CLI::runcommand options.
-		private static $runcommand_options = array(
-			'return'     => true,
-			'parse'      => 'json',
-			'launch'     => false,
-			'exit_error' => true,
-		);
-
 		// Main function.
 		public function run() {
 			// Set status as success by default.
@@ -305,7 +273,7 @@ if ( defined( 'WP_CLI' ) && WP_CLI ) {
 			$updates = '';
 
 			// Gather the theme list.
-			$themes = WP_CLI::runcommand( 'theme list --format=json', self::$runcommand_options );
+			$themes = WP_CLI::runcommand( 'theme list --format=json', WPMUDEV_Doctor_Helper::runcommand_options() );
 
 			// Set the total count of themes.
 			$total_themes = count( $themes );
@@ -345,14 +313,6 @@ if ( defined( 'WP_CLI' ) && WP_CLI ) {
 	 * command: wp doctor check wpmudev-user-stats --config=PATH
 	 */
 	class WPMUDEV_Doctor_User_Stats extends runcommand\Doctor\Checks\Check {
-		// WP_CLI::runcommand options.
-		private static $runcommand_options = array(
-			'return'     => true,
-			'parse'      => 'json',
-			'launch'     => false,
-			'exit_error' => true,
-		);
-
 		// Main function.
 		public function run() {
 			// Set status as success by default.
@@ -363,9 +323,9 @@ if ( defined( 'WP_CLI' ) && WP_CLI ) {
 
 			// Gather user information.
 			if ( is_multisite() ) {
-				$total_users = WP_CLI::runcommand( 'user list --format=count --network', self::$runcommand_options );
+				$total_users = WP_CLI::runcommand( 'user list --format=count --network', WPMUDEV_Doctor_Helper::runcommand_options() );
 			} else {
-				$total_users = WP_CLI::runcommand( 'user list --format=count', self::$runcommand_options );
+				$total_users = WP_CLI::runcommand( 'user list --format=count', WPMUDEV_Doctor_Helper::runcommand_options() );
 			}
 
 			// If there are users adjust the return message.
@@ -388,14 +348,6 @@ if ( defined( 'WP_CLI' ) && WP_CLI ) {
 	 * command: wp doctor check wpmudev-roles-stats --config=PATH
 	 */
 	class WPMUDEV_Doctor_Role_Stats extends runcommand\Doctor\Checks\Check {
-		// WP_CLI::runcommand options.
-		private static $runcommand_options = array(
-			'return'     => true,
-			'parse'      => 'json',
-			'launch'     => false,
-			'exit_error' => true,
-		);
-
 		// Main function.
 		public function run() {
 			// Set status as success by default.
@@ -408,11 +360,11 @@ if ( defined( 'WP_CLI' ) && WP_CLI ) {
 			$role_list = array();
 
 			// Gather roles.
-			$roles = WP_CLI::runcommand( 'role list --format=json', self::$runcommand_options );
+			$roles = WP_CLI::runcommand( 'role list --format=json', WPMUDEV_Doctor_Helper::runcommand_options() );
 
 			if ( ! empty( $roles ) ) {
 				foreach ( $roles as $role ) {
-					$count_users = WP_CLI::runcommand( 'user list --format=count --role=' . $role['role'], self::$runcommand_options );
+					$count_users = WP_CLI::runcommand( 'user list --format=count --role=' . $role['role'], WPMUDEV_Doctor_Helper::runcommand_options() );
 					array_push( $role_list, $count_users . ' ' . $role['role'] );
 				}
 
@@ -426,7 +378,7 @@ if ( defined( 'WP_CLI' ) && WP_CLI ) {
 			// Check for Super Admins if Multisite.
 			if ( is_multisite() ) {
 				// Gather Super Admins.
-				$super_admins = WP_CLI::runcommand( 'super-admin list --format=count', self::$runcommand_options );
+				$super_admins = WP_CLI::runcommand( 'super-admin list --format=count', WPMUDEV_Doctor_Helper::runcommand_options() );
 
 				if ( 0 === $super_admins ) {
 					// If there are no Super Admins set status as error.
@@ -448,23 +400,15 @@ if ( defined( 'WP_CLI' ) && WP_CLI ) {
 	 * command: wp doctor check wpmudev-posts-stats --config=PATH
 	 */
 	class WPMUDEV_Doctor_Posts_Stats extends runcommand\Doctor\Checks\Check {
-		// WP_CLI::runcommand options.
-		private static $runcommand_options = array(
-			'return'     => true,
-			'parse'      => 'json',
-			'launch'     => false,
-			'exit_error' => true,
-		);
-
 		// Main function.
 		public function run() {
 			// Set status as success by default.
 			$this->set_status( 'success' );
 
 			// Gather post stats.
-			$posts       = WP_CLI::runcommand( 'post list --post_type=post --format=count', self::$runcommand_options );
-			$pages       = WP_CLI::runcommand( 'post list --post_type=page --format=count', self::$runcommand_options );
-			$attachments = WP_CLI::runcommand( 'post list --post_type=attachment --format=count', self::$runcommand_options );
+			$posts       = WP_CLI::runcommand( 'post list --post_type=post --format=count', WPMUDEV_Doctor_Helper::runcommand_options() );
+			$pages       = WP_CLI::runcommand( 'post list --post_type=page --format=count', WPMUDEV_Doctor_Helper::runcommand_options() );
+			$attachments = WP_CLI::runcommand( 'post list --post_type=attachment --format=count', WPMUDEV_Doctor_Helper::runcommand_options() );
 
 			// Return message.
 			$this->set_message( $posts . ' Posts, ' . $pages . ' Pages, ' . $attachments . ' Attachments.' );
@@ -480,14 +424,6 @@ if ( defined( 'WP_CLI' ) && WP_CLI ) {
 		// Limit in bytes.
 		private static $limit_bytes = 900 * 1024;
 
-		// WP_CLI::runcommand options.
-		private static $runcommand_options = array(
-			'return'     => true,
-			'parse'      => 'json',
-			'launch'     => false,
-			'exit_error' => true,
-		);
-
 		// Main function.
 		public function run() {
 			// Set status as success by default.
@@ -497,7 +433,7 @@ if ( defined( 'WP_CLI' ) && WP_CLI ) {
 			$message = '';
 
 			// Get total bytes of autoloaded options.
-			$total_bytes = WP_CLI::runcommand( 'option list --autoload=on --format=total_bytes', self::$runcommand_options );
+			$total_bytes = WP_CLI::runcommand( 'option list --autoload=on --format=total_bytes', WPMUDEV_Doctor_Helper::runcommand_options() );
 
 			// Convert bytes to readable format.
 			$human_limit = WPMUDEV_Doctor_Helper::format_bytes( self::$limit_bytes );
@@ -508,7 +444,7 @@ if ( defined( 'WP_CLI' ) && WP_CLI ) {
 				$this->set_status( 'warning' );
 
 				// Gather autoloaded options.
-				$data = WP_CLI::runcommand( 'option list --fields=option_name,size_bytes --autoload=on --format=json', self::$runcommand_options );
+				$data = WP_CLI::runcommand( 'option list --fields=option_name,size_bytes --autoload=on --format=json', WPMUDEV_Doctor_Helper::runcommand_options() );
 
 				// Sort options by size.
 				usort(
@@ -685,21 +621,13 @@ if ( defined( 'WP_CLI' ) && WP_CLI ) {
 		// Limit of duplicate crons.
 		private static $dup_limit_count = 10;
 
-		// WP_CLI::runcommand options.
-		private static $runcommand_options = array(
-			'return'     => true,
-			'parse'      => 'json',
-			'launch'     => false,
-			'exit_error' => true,
-		);
-
 		// Main function.
 		public function run() {
 			// Initialize duplicate message.
 			$dup_msg = '';
 
 			// Count crons.
-			$crons      = WP_CLI::runcommand( 'cron event list --format=json', self::$runcommand_options );
+			$crons      = WP_CLI::runcommand( 'cron event list --format=json', WPMUDEV_Doctor_Helper::runcommand_options() );
 			$cron_count = count( $crons );
 
 			// Adjust the status if the crons exceed the limit.
@@ -933,6 +861,18 @@ if ( defined( 'WP_CLI' ) && WP_CLI ) {
 			$base     = log( $size, 1024 );
 			$suffixes = array( '', 'kb', 'mb', 'g', 't' );
 			return round( pow( 1024, $base - floor( $base ) ), $precision ) . $suffixes[ floor( $base ) ];
+		}
+
+		/**
+		 * Options for WP_CLI::runcommand()
+		 */
+		public static function runcommand_options() {
+			return array(
+				'return'     => true,
+				'parse'      => 'json',
+				'launch'     => false,
+				'exit_error' => true,
+			);
 		}
 	}
 }
