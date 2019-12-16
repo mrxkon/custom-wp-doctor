@@ -1,40 +1,13 @@
 <?php // phpcs:ignore
 
 /**
- * Combined `wp doctor` checks created originally for WPMU DEV Hosting.
- * Feel free to use, enhance, alter them as needed :).
- *
- * This was created to fill a "gap" that I felt existed for easier usage
- * & to display as much information as possible in a more compact way.
+ * This file comes with "wpmudev-doctor".
  *
  * Author:      Konstantinos Xenos
  * Author URI:  https://xkon.gr
  * Repo URI:    https://github.com/mrxkon/wpmudev-doctor/
  * License:     GPLv2 or later
  * License URI: https://www.gnu.org/licenses/gpl-2.0.html
- */
-
-/**
- * Copyright (C) 2019 Konstantinos Xenos (https://xkon.gr).
- *
- * This program is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation, either version 2 of the License, or
- * (at your option) any later version.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with this program. If not, see https://www.gnu.org/licenses/.
- */
-
-/**
- * Props to all contributors of https://github.com/wp-cli/doctor-command.
- *
- * For installation instructions visit: https://github.com/mrxkon/wpmudev-doctor/.
  */
 
 // Check that the file is not accessed directly.
