@@ -9,14 +9,10 @@
 [![Quality Gate Status](https://sonarcloud.io/api/project_badges/measure?project=mrxkon_custom-wp-doctor&metric=alert_status)](https://sonarcloud.io/dashboard?id=mrxkon_custom-wp-doctor) [![Security Rating](https://sonarcloud.io/api/project_badges/measure?project=mrxkon_custom-wp-doctor&metric=security_rating)](https://sonarcloud.io/dashboard?id=mrxkon_custom-wp-doctor)
  [![Maintainability Rating](https://sonarcloud.io/api/project_badges/measure?project=mrxkon_custom-wp-doctor&metric=sqale_rating)](https://sonarcloud.io/dashboard?id=mrxkon_custom-wp-doctor) [![Reliability Rating](https://sonarcloud.io/api/project_badges/measure?project=mrxkon_custom-wp-doctor&metric=reliability_rating)](https://sonarcloud.io/dashboard?id=mrxkon_custom-wp-doctor)
 
-[![My Website](https://img.shields.io/badge/My-Website-orange.svg)](https://xkon.gr)  [![WordPress Profile](https://img.shields.io/badge/WordPress-Profile-blue.svg)](https://profiles.wordpress.org/xkon)
+[![My Website](https://img.shields.io/badge/My-Website-orange.svg)](https://xkon.gr)  [![WordPress Profile](https://img.shields.io/badge/WordPress-Profile-blue.svg)](https://profiles.wordpress.org/xkon) [![PRs Welcomed](https://img.shields.io/badge/PRs-Welcomed%20!-brightgreen)](https://github.com/mrxkon/custom-wp-doctor/pulls)
 
 [![Built for WordPress](https://img.shields.io/badge/built%20for-WordPress-blue)](https://wordpress.org) [![Built for WP-CLI](https://img.shields.io/badge/built%20for-WP--CLI-3d681d)](https://wp-cli.org/) [![Built for WPMU DEV](https://img.shields.io/badge/built%20for-WPMU%20DEV-blue)](https://premium.wpmudev.org/)
 [![License: GPL v2](https://img.shields.io/badge/License-GPL%20v2+-red)](http://www.gnu.org/licenses/gpl-2.0.html)
-
----
-
-### Pull requests are welcome!
 
 ---
 
