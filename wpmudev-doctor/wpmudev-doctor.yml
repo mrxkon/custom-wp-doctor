@@ -1,4 +1,11 @@
-# WPMU DEV configuration for `wp doctor`
+# This file comes with "wpmudev-doctor".
+#
+# Author:      Konstantinos Xenos
+# Author URI:  https://xkon.gr
+# Repo URI:    https://github.com/mrxkon/wpmudev-doctor/
+# License:     GPLv2 or later
+# License URI: https://www.gnu.org/licenses/gpl-2.0.html
+
 wpmudev-core-stats:
   class: WPMUDEV_Doctor_Core_Stats
   require: wpmudev-doctor.php

@@ -6,7 +6,8 @@
 
 This was created to fill a "gap" that I felt existed for easier usage & to display as much information as possible in a more compact way when running only a `wp doctor` command instead of having to always run `wp doctor check --all --config=PATH`
 
-![WordPress Coding Standards](https://github.com/mrxkon/wpmudev-doctor/workflows/WordPress%20Coding%20Standards/badge.svg) ![PHP Compatibility 7.0+](https://github.com/mrxkon/wpmudev-doctor/workflows/PHP%20Compatibility%207.0+/badge.svg) ![PHP Syntax](https://github.com/mrxkon/wpmudev-doctor/workflows/PHP%20Syntax/badge.svg)
+![Tests](https://github.com/mrxkon/wpmudev-doctor/workflows/Tests/badge.svg)
+![PHP Compatibility 7.0+](https://img.shields.io/badge/PHP%20Compatibility-7.0+-8892BF) ![WordPress Coding Standards](https://img.shields.io/badge/WordPress%20Coding%20Standards-latest-blue)
 
 [![Quality Gate Status](https://sonarcloud.io/api/project_badges/measure?project=mrxkon_wpmudev-doctor&metric=alert_status)](https://sonarcloud.io/dashboard?id=mrxkon_wpmudev-doctor) [![Security Rating](https://sonarcloud.io/api/project_badges/measure?project=mrxkon_wpmudev-doctor&metric=security_rating)](https://sonarcloud.io/dashboard?id=mrxkon_wpmudev-doctor)
  [![Maintainability Rating](https://sonarcloud.io/api/project_badges/measure?project=mrxkon_wpmudev-doctor&metric=sqale_rating)](https://sonarcloud.io/dashboard?id=mrxkon_wpmudev-doctor) [![Reliability Rating](https://sonarcloud.io/api/project_badges/measure?project=mrxkon_wpmudev-doctor&metric=reliability_rating)](https://sonarcloud.io/dashboard?id=mrxkon_wpmudev-doctor)
@@ -23,32 +24,9 @@ This was created to fill a "gap" that I felt existed for easier usage & to displ
 
 ## How to install
 
-1. Install the `doctor-command` pacakge via `wp package install git@github.com:wp-cli/doctor-command.git`.
-2. Create a folder named `wpmudev-doctor` inside your `wp-content/mu-plugins/` directory and place both of the `wpmudev-doctor.yml` and `wpmudev-doctor.php` there.
-3. Create a `wp-doctor-wrapper.php` inside your `wp-content/mu-plugins/` directory and paste the following code. __Note__: Replace the {FULL_PATH} with your full path to the directory.
-
-```
-<?php // phpcs:ignore
-
-// Check that the file is not accessed directly.
-if ( ! defined( 'ABSPATH' ) ) {
-	die( 'We\'re sorry, but you can not directly access this file.' );
-}
-
-// Wrapper command for "wp doctor"
-if ( defined( 'WP_CLI' ) && WP_CLI ) {
-	WP_CLI::add_command( 'doctor', 'WPMUDEV_Hosting_Doctor' );
-}
-
-/**
- * Adds a wrapper "wp doctor" function to run our custom config directly.
- */
-class WPMUDEV_Hosting_Doctor {
-	public function __invoke( $args, $assoc_args ) {
-		WP_CLI::runcommand( 'doctor check --all --config={FULL_PATH}/wp-content/mu-plugins/wpmudev-doctor/wpmudev-doctor.yml' );
-	}
-}
-```
+1. Make sure to have `WP-CLI` & [wp-cli/doctor-command](https://github.com/wp-cli/doctor-command) installed.
+2. Download the `master` branch.
+3. Upload the `wpmudev-doctor` folder & the `class-wpmudev-hosting-doctor.php` into your `mu-plugins` directory.
 
 If everything is done correctly you can now run `wp doctor` and you should get an output like this:
 
