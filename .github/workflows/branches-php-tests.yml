@@ -1,4 +1,4 @@
-name: PHP Syntax/PHP 7.0+/WPCS
+name: Tests
 on:
   push:
     branches: 
