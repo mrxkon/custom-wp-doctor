@@ -1,12 +1,12 @@
-<?php
+<?php // phpcs:ignore -- \r\n notice.
 
 /**
- * Plugin Name: WPMU DEV Hosting "wp doctor"
- * Description: Combined WP-CLI "wp doctor" checks.
+ * Plugin Name: Customized "wp doctor"
+ * Description: Combined & customized WP-CLI "wp doctor" checks.
  * Version:     1.0
  * Author:      Konstantinos Xenos
  * Author URI:  https://xkon.gr
- * Repo URI:    https://github.com/mrxkon/wpmudev-doctor/
+ * Repo URI:    https://github.com/mrxkon/custom-wp-doctor/
  * License:     GPLv2 or later
  * License URI: https://www.gnu.org/licenses/gpl-2.0.html
  */
@@ -31,7 +31,7 @@
 /**
  * Props to all contributors of https://github.com/wp-cli/doctor-command.
  *
- * For installation instructions visit: https://github.com/mrxkon/wpmudev-doctor/.
+ * For installation instructions visit: https://github.com/mrxkon/custom-wp-doctor/.
  */
 
 // Check that the file is not accessed directly.
@@ -41,14 +41,14 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 // Wrapper command for "wp doctor"
 if ( defined( 'WP_CLI' ) && WP_CLI ) {
-	WP_CLI::add_command( 'doctor', 'WPMUDEV_Hosting_Doctor' );
+	WP_CLI::add_command( 'doctor', 'Custom_WP_Doctor' );
 }
 
 /**
  * Adds a wrapper "wp doctor" function to run our custom config directly.
  */
-class WPMUDEV_Hosting_Doctor {
+class Custom_WP_Doctor {
 	public function __invoke( $args, $assoc_args ) {
-		WP_CLI::runcommand( 'doctor check --all --config=' . ABSPATH . 'wp-content/mu-plugins/wpmudev-doctor/wpmudev-doctor.yml' );
+		WP_CLI::runcommand( 'doctor check --all --config=' . ABSPATH . 'wp-content/mu-plugins/custom-wp-doctor/custom-wp-doctor.yml' );
 	}
 }

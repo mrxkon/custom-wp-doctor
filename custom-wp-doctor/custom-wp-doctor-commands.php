@@ -1,11 +1,11 @@
-<?php // phpcs:ignore
+<?php // phpcs:ignore -- \r\n notice & class file name.
 
 /**
- * This file comes with "wpmudev-doctor".
+ * This file comes with "custom-wp-doctor".
  *
  * Author:      Konstantinos Xenos
  * Author URI:  https://xkon.gr
- * Repo URI:    https://github.com/mrxkon/wpmudev-doctor/
+ * Repo URI:    https://github.com/mrxkon/custom-wp-doctor/
  * License:     GPLv2 or later
  * License URI: https://www.gnu.org/licenses/gpl-2.0.html
  */
@@ -19,20 +19,18 @@ if ( defined( 'WP_CLI' ) && WP_CLI ) {
 	/**
 	 * Custom defines.
 	 */
-	define( 'WPMUDEV_DOCTOR_SUCCESS', 'success' );
-	define( 'WPMUDEV_DOCTOR_WARNING', 'warning' );
-	define( 'WPMUDEV_DOCTOR_ERROR', 'error' );
+	define( 'CUSTOM_WP_DOCTOR_SUCCESS', 'success' );
+	define( 'CUSTOM_WP_DOCTOR_WARNING', 'warning' );
+	define( 'CUSTOM_WP_DOCTOR_ERROR', 'error' );
 
 	/**
-	 * Checks for Core stats.
-	 *
-	 * command: wp doctor check wpmudev-core-stats --config=PATH
+	 * Core stats.
 	 */
-	class WPMUDEV_Doctor_Core_Stats extends runcommand\Doctor\Checks\Check {
+	class Custom_WP_Doctor_Core_Stats extends runcommand\Doctor\Checks\Check {
 		// Main function.
 		public function run() {
 			// Set status as success by default.
-			$this->set_status( WPMUDEV_DOCTOR_SUCCESS );
+			$this->set_status( CUSTOM_WP_DOCTOR_SUCCESS );
 
 			// Set default core message.
 			$core = 'WordPress is at the latest version.';
@@ -58,17 +56,17 @@ if ( defined( 'WP_CLI' ) && WP_CLI ) {
 
 			if ( $has_minor && $has_major || $has_major ) {
 				// If both updates exist or if there is a major set as an error.
-				$this->set_status( WPMUDEV_DOCTOR_ERROR );
+				$this->set_status( CUSTOM_WP_DOCTOR_ERROR );
 				$core = 'A new major version is available.';
 			} elseif ( $has_minor ) {
 				// If it's a minor update set as a warning.
-				$this->set_status( WPMUDEV_DOCTOR_WARNING );
+				$this->set_status( CUSTOM_WP_DOCTOR_WARNING );
 				$core = 'A new minor version is available.';
 			}
 
 			// Check if this is a Multisite.
 			if ( is_multisite() ) {
-				$total_sites = WP_CLI::runcommand( 'site list --format=count', WPMUDEV_Doctor_Helper::runcommand_options() );
+				$total_sites = WP_CLI::runcommand( 'site list --format=count', Custom_WP_Doctor_Helper::runcommand_options() );
 
 				// Check if Multisite is Subdirectory or Subdomain.
 				if ( defined( 'SUBDOMAIN_INSTALL' ) && SUBDOMAIN_INSTALL ) {
@@ -83,7 +81,7 @@ if ( defined( 'WP_CLI' ) && WP_CLI ) {
 			}
 
 			// Check if the this is a Public site.
-			$public = WP_CLI::runcommand( 'option get blog_public', WPMUDEV_Doctor_Helper::runcommand_options() );
+			$public = WP_CLI::runcommand( 'option get blog_public', Custom_WP_Doctor_Helper::runcommand_options() );
 
 			if ( 1 === $public ) {
 				$public_msg = 'Public.';
@@ -97,11 +95,9 @@ if ( defined( 'WP_CLI' ) && WP_CLI ) {
 	}
 
 	/**
-	 * Checks for Plugin stats.
-	 *
-	 * command: wp doctor check wpmudev-plugin-stats --config=PATH
+	 * Plugin stats.
 	 */
-	class WPMUDEV_Doctor_Plugin_Stats extends runcommand\Doctor\Checks\Check {
+	class Custom_WP_Doctor_Plugin_Stats extends runcommand\Doctor\Checks\Check {
 		// Limit of active plugins.
 		private static $limit_active = 80;
 
@@ -111,7 +107,7 @@ if ( defined( 'WP_CLI' ) && WP_CLI ) {
 		// Main function.
 		public function run() {
 			// Set status as success by default.
-			$this->set_status( WPMUDEV_DOCTOR_SUCCESS );
+			$this->set_status( CUSTOM_WP_DOCTOR_SUCCESS );
 
 			// Initialize plugin_updates array.
 			$plugin_updates = array();
@@ -123,25 +119,25 @@ if ( defined( 'WP_CLI' ) && WP_CLI ) {
 			$updates = '';
 
 			// Gather various plugin stats.
-			$plugins                = WP_CLI::runcommand( 'plugin list --format=json', WPMUDEV_Doctor_Helper::runcommand_options() );
+			$plugins                = WP_CLI::runcommand( 'plugin list --format=json', Custom_WP_Doctor_Helper::runcommand_options() );
 			$total_plugins          = count( $plugins );
-			$active_plugins         = WP_CLI::runcommand( 'plugin list --status=active --format=count', WPMUDEV_Doctor_Helper::runcommand_options() );
-			$active_network_plugins = WP_CLI::runcommand( 'plugin list --status=active-network --format=count', WPMUDEV_Doctor_Helper::runcommand_options() );
-			$inactive_plugins       = WP_CLI::runcommand( 'plugin list --status=inactive --format=count', WPMUDEV_Doctor_Helper::runcommand_options() );
-			$mu_plugins             = WP_CLI::runcommand( 'plugin list --status=must-use --format=count', WPMUDEV_Doctor_Helper::runcommand_options() );
-			$dropin_plugins         = WP_CLI::runcommand( 'plugin list --status=dropin --format=count', WPMUDEV_Doctor_Helper::runcommand_options() );
+			$active_plugins         = WP_CLI::runcommand( 'plugin list --status=active --format=count', Custom_WP_Doctor_Helper::runcommand_options() );
+			$active_network_plugins = WP_CLI::runcommand( 'plugin list --status=active-network --format=count', Custom_WP_Doctor_Helper::runcommand_options() );
+			$inactive_plugins       = WP_CLI::runcommand( 'plugin list --status=inactive --format=count', Custom_WP_Doctor_Helper::runcommand_options() );
+			$mu_plugins             = WP_CLI::runcommand( 'plugin list --status=must-use --format=count', Custom_WP_Doctor_Helper::runcommand_options() );
+			$dropin_plugins         = WP_CLI::runcommand( 'plugin list --status=dropin --format=count', Custom_WP_Doctor_Helper::runcommand_options() );
 			$total_active_plugins   = $active_plugins + $active_network_plugins;
 
 			// Set warning if total plugins is over the limit.
 			if ( $total_active_plugins > self::$limit_active ) {
-				$this->set_status( WPMUDEV_DOCTOR_WARNING );
+				$this->set_status( CUSTOM_WP_DOCTOR_WARNING );
 			}
 
 			// Set warning if inactive plugins is over the percentage limit.
 			$inactive_percent = (int) self::$limit_inactive_percent;
 
 			if ( ( $inactive_plugins / $total_plugins ) > ( $inactive_percent / 100 ) ) {
-				$this->set_status( WPMUDEV_DOCTOR_WARNING );
+				$this->set_status( CUSTOM_WP_DOCTOR_WARNING );
 			}
 
 			// Check plugins for updates.
@@ -153,7 +149,7 @@ if ( defined( 'WP_CLI' ) && WP_CLI ) {
 
 			// If plugins have updates set status to warning and adjust the return message.
 			if ( ! empty( $plugin_updates ) ) {
-				$this->set_status( WPMUDEV_DOCTOR_WARNING );
+				$this->set_status( CUSTOM_WP_DOCTOR_WARNING );
 				if ( 1 === count( $plugin_updates ) ) {
 					$txt = '1 update';
 				} else {
@@ -168,15 +164,13 @@ if ( defined( 'WP_CLI' ) && WP_CLI ) {
 	}
 
 	/**
-	 * Checks for WPMUDEV Plugins.
-	 *
-	 * command: wp doctor check wpmudev-plugin-check --config=PATH
+	 * WPMUDEV Plugins.
 	 */
-	class WPMUDEV_Doctor_Plugin_Check extends runcommand\Doctor\Checks\Check {
+	class Custom_WP_Doctor_Plugin_Check extends runcommand\Doctor\Checks\Check {
 		// Main function.
 		public function run() {
 			// Set status as success by default.
-			$this->set_status( WPMUDEV_DOCTOR_SUCCESS );
+			$this->set_status( CUSTOM_WP_DOCTOR_SUCCESS );
 
 			// Set default success return message.
 			$message = 'WPMU DEV Dashboard, Hummingbird, Defender & Smush are installed and activated.';
@@ -185,8 +179,8 @@ if ( defined( 'WP_CLI' ) && WP_CLI ) {
 			$errors = array();
 
 			// Check for wpmudev-updates (WPMU DEV Dashboard plugin).
-			$dash_active         = WP_CLI::runcommand( 'plugin list --format=count  --name=wpmudev-updates --status=active', WPMUDEV_Doctor_Helper::runcommand_options() );
-			$dash_network_active = WP_CLI::runcommand( 'plugin list --format=count  --name=wpmudev-updates --status=active-network', WPMUDEV_Doctor_Helper::runcommand_options() );
+			$dash_active         = WP_CLI::runcommand( 'plugin list --format=count  --name=wpmudev-updates --status=active', Custom_WP_Doctor_Helper::runcommand_options() );
+			$dash_network_active = WP_CLI::runcommand( 'plugin list --format=count  --name=wpmudev-updates --status=active-network', Custom_WP_Doctor_Helper::runcommand_options() );
 			$dash_count          = $dash_active + $dash_network_active;
 
 			if ( 0 === $dash_count ) {
@@ -194,10 +188,10 @@ if ( defined( 'WP_CLI' ) && WP_CLI ) {
 			}
 
 			// Check for hummingbird-performance & wp-hummingbird (Hummingbird plugin).
-			$hb_active            = WP_CLI::runcommand( 'plugin list --format=count --name=hummingbird-performance --status=active', WPMUDEV_Doctor_Helper::runcommand_options() );
-			$hb_network_active    = WP_CLI::runcommand( 'plugin list --format=count --name=hummingbird-performance --status=active-network', WPMUDEV_Doctor_Helper::runcommand_options() );
-			$hbpro_active         = WP_CLI::runcommand( 'plugin list --format=count --name=wp-hummingbird --status=active', WPMUDEV_Doctor_Helper::runcommand_options() );
-			$hbpro_network_active = WP_CLI::runcommand( 'plugin list --format=count --name=wp-hummingbird --status=active-network', WPMUDEV_Doctor_Helper::runcommand_options() );
+			$hb_active            = WP_CLI::runcommand( 'plugin list --format=count --name=hummingbird-performance --status=active', Custom_WP_Doctor_Helper::runcommand_options() );
+			$hb_network_active    = WP_CLI::runcommand( 'plugin list --format=count --name=hummingbird-performance --status=active-network', Custom_WP_Doctor_Helper::runcommand_options() );
+			$hbpro_active         = WP_CLI::runcommand( 'plugin list --format=count --name=wp-hummingbird --status=active', Custom_WP_Doctor_Helper::runcommand_options() );
+			$hbpro_network_active = WP_CLI::runcommand( 'plugin list --format=count --name=wp-hummingbird --status=active-network', Custom_WP_Doctor_Helper::runcommand_options() );
 			$hb_count             = $hb_active + $hb_network_active + $hbpro_active + $hbpro_network_active;
 
 			if ( 0 === $hb_count ) {
@@ -205,10 +199,10 @@ if ( defined( 'WP_CLI' ) && WP_CLI ) {
 			}
 
 			// Check for defender-security & wp-defender (Defender plugin).
-			$def_active            = WP_CLI::runcommand( 'plugin list --format=count --name=defender-security --status=active', WPMUDEV_Doctor_Helper::runcommand_options() );
-			$def_network_active    = WP_CLI::runcommand( 'plugin list --format=count --name=defender-security --status=active-network', WPMUDEV_Doctor_Helper::runcommand_options() );
-			$defpro_active         = WP_CLI::runcommand( 'plugin list --format=count --name=wp-defender --status=active', WPMUDEV_Doctor_Helper::runcommand_options() );
-			$defpro_network_active = WP_CLI::runcommand( 'plugin list --format=count --name=wp-defender --status=active-network', WPMUDEV_Doctor_Helper::runcommand_options() );
+			$def_active            = WP_CLI::runcommand( 'plugin list --format=count --name=defender-security --status=active', Custom_WP_Doctor_Helper::runcommand_options() );
+			$def_network_active    = WP_CLI::runcommand( 'plugin list --format=count --name=defender-security --status=active-network', Custom_WP_Doctor_Helper::runcommand_options() );
+			$defpro_active         = WP_CLI::runcommand( 'plugin list --format=count --name=wp-defender --status=active', Custom_WP_Doctor_Helper::runcommand_options() );
+			$defpro_network_active = WP_CLI::runcommand( 'plugin list --format=count --name=wp-defender --status=active-network', Custom_WP_Doctor_Helper::runcommand_options() );
 			$def_count             = $def_active + $def_network_active + $defpro_active + $defpro_network_active;
 
 			if ( 0 === $def_count ) {
@@ -216,10 +210,10 @@ if ( defined( 'WP_CLI' ) && WP_CLI ) {
 			}
 
 			// Check for wp-smush-pro & wp-smushit (Smush plugin).
-			$smush_active            = WP_CLI::runcommand( 'plugin list --format=count --name=wp-smushit --status=active', WPMUDEV_Doctor_Helper::runcommand_options() );
-			$smush_network_active    = WP_CLI::runcommand( 'plugin list --format=count --name=wp-smushit --status=active-network', WPMUDEV_Doctor_Helper::runcommand_options() );
-			$smushpro_active         = WP_CLI::runcommand( 'plugin list --format=count --name=wp-smush-pro --status=active', WPMUDEV_Doctor_Helper::runcommand_options() );
-			$smushpro_network_active = WP_CLI::runcommand( 'plugin list --format=count --name=wp-smush-pro --status=active-network', WPMUDEV_Doctor_Helper::runcommand_options() );
+			$smush_active            = WP_CLI::runcommand( 'plugin list --format=count --name=wp-smushit --status=active', Custom_WP_Doctor_Helper::runcommand_options() );
+			$smush_network_active    = WP_CLI::runcommand( 'plugin list --format=count --name=wp-smushit --status=active-network', Custom_WP_Doctor_Helper::runcommand_options() );
+			$smushpro_active         = WP_CLI::runcommand( 'plugin list --format=count --name=wp-smush-pro --status=active', Custom_WP_Doctor_Helper::runcommand_options() );
+			$smushpro_network_active = WP_CLI::runcommand( 'plugin list --format=count --name=wp-smush-pro --status=active-network', Custom_WP_Doctor_Helper::runcommand_options() );
 			$smush_count             = $smush_active + $smush_network_active + $smushpro_active + $smushpro_network_active;
 
 			if ( 0 === $smush_count ) {
@@ -228,7 +222,7 @@ if ( defined( 'WP_CLI' ) && WP_CLI ) {
 
 			// If there are errors set status to warning and adjust the return message.
 			if ( ! empty( $errors ) ) {
-				$this->set_status( WPMUDEV_DOCTOR_WARNING );
+				$this->set_status( CUSTOM_WP_DOCTOR_WARNING );
 				$message = 'Not installed or activated: ' . implode( ', ', $errors );
 			}
 
@@ -238,15 +232,13 @@ if ( defined( 'WP_CLI' ) && WP_CLI ) {
 	}
 
 	/**
-	 * Checks for Theme stats.
-	 *
-	 * command: wp doctor check wpmudev-theme-stats --config=PATH
+	 * Theme stats.
 	 */
-	class WPMUDEV_Doctor_Theme_Stats extends runcommand\Doctor\Checks\Check {
+	class Custom_WP_Doctor_Theme_Stats extends runcommand\Doctor\Checks\Check {
 		// Main function.
 		public function run() {
 			// Set status as success by default.
-			$this->set_status( WPMUDEV_DOCTOR_SUCCESS );
+			$this->set_status( CUSTOM_WP_DOCTOR_SUCCESS );
 
 			// Initialize theme_updates array.
 			$theme_updates = array();
@@ -258,7 +250,7 @@ if ( defined( 'WP_CLI' ) && WP_CLI ) {
 			$updates = '';
 
 			// Gather the theme list.
-			$themes = WP_CLI::runcommand( 'theme list --format=json', WPMUDEV_Doctor_Helper::runcommand_options() );
+			$themes = WP_CLI::runcommand( 'theme list --format=json', Custom_WP_Doctor_Helper::runcommand_options() );
 
 			// Set the total count of themes.
 			$total_themes = count( $themes );
@@ -273,7 +265,7 @@ if ( defined( 'WP_CLI' ) && WP_CLI ) {
 
 			// If themes have updates set status to warning and adjust the return message.
 			if ( ! empty( $theme_updates ) ) {
-				$this->set_status( WPMUDEV_DOCTOR_WARNING );
+				$this->set_status( CUSTOM_WP_DOCTOR_WARNING );
 				if ( 1 === count( $theme_updates ) ) {
 					$txt = '1 update';
 				} else {
@@ -284,7 +276,7 @@ if ( defined( 'WP_CLI' ) && WP_CLI ) {
 
 			// Set status as error if there are no themes found.
 			if ( 0 === $total_themes ) {
-				$this->set_status( WPMUDEV_DOCTOR_ERROR );
+				$this->set_status( CUSTOM_WP_DOCTOR_ERROR );
 			}
 
 			// Return message.
@@ -293,24 +285,22 @@ if ( defined( 'WP_CLI' ) && WP_CLI ) {
 	}
 
 	/**
-	 * Checks for User stats.
-	 *
-	 * command: wp doctor check wpmudev-user-stats --config=PATH
+	 * User stats.
 	 */
-	class WPMUDEV_Doctor_User_Stats extends runcommand\Doctor\Checks\Check {
+	class Custom_WP_Doctor_User_Stats extends runcommand\Doctor\Checks\Check {
 		// Main function.
 		public function run() {
 			// Set status as success by default.
-			$this->set_status( WPMUDEV_DOCTOR_SUCCESS );
+			$this->set_status( CUSTOM_WP_DOCTOR_SUCCESS );
 
 			// Initialize the return message.
 			$message = '';
 
 			// Gather user information.
 			if ( is_multisite() ) {
-				$total_users = WP_CLI::runcommand( 'user list --format=count --network', WPMUDEV_Doctor_Helper::runcommand_options() );
+				$total_users = WP_CLI::runcommand( 'user list --format=count --network', Custom_WP_Doctor_Helper::runcommand_options() );
 			} else {
-				$total_users = WP_CLI::runcommand( 'user list --format=count', WPMUDEV_Doctor_Helper::runcommand_options() );
+				$total_users = WP_CLI::runcommand( 'user list --format=count', Custom_WP_Doctor_Helper::runcommand_options() );
 			}
 
 			// If there are users adjust the return message.
@@ -318,7 +308,7 @@ if ( defined( 'WP_CLI' ) && WP_CLI ) {
 				$message = $total_users . ' Total.';
 			} else {
 				// If there are no users adjust the return message and set status as error.
-				$this->set_status( WPMUDEV_DOCTOR_ERROR );
+				$this->set_status( CUSTOM_WP_DOCTOR_ERROR );
 				$message = 'No Users found.';
 			}
 
@@ -328,15 +318,13 @@ if ( defined( 'WP_CLI' ) && WP_CLI ) {
 	}
 
 	/**
-	 * Checks for Role stats.
-	 *
-	 * command: wp doctor check wpmudev-roles-stats --config=PATH
+	 * Role stats.
 	 */
-	class WPMUDEV_Doctor_Role_Stats extends runcommand\Doctor\Checks\Check {
+	class Custom_WP_Doctor_Role_Stats extends runcommand\Doctor\Checks\Check {
 		// Main function.
 		public function run() {
 			// Set status as success by default.
-			$this->set_status( WPMUDEV_DOCTOR_SUCCESS );
+			$this->set_status( CUSTOM_WP_DOCTOR_SUCCESS );
 
 			// Initialize super admins message.
 			$super_admin = '';
@@ -345,29 +333,29 @@ if ( defined( 'WP_CLI' ) && WP_CLI ) {
 			$role_list = array();
 
 			// Gather roles.
-			$roles = WP_CLI::runcommand( 'role list --format=json', WPMUDEV_Doctor_Helper::runcommand_options() );
+			$roles = WP_CLI::runcommand( 'role list --format=json', Custom_WP_Doctor_Helper::runcommand_options() );
 
 			if ( ! empty( $roles ) ) {
 				foreach ( $roles as $role ) {
-					$count_users = WP_CLI::runcommand( 'user list --format=count --role=' . $role['role'], WPMUDEV_Doctor_Helper::runcommand_options() );
+					$count_users = WP_CLI::runcommand( 'user list --format=count --role=' . $role['role'], Custom_WP_Doctor_Helper::runcommand_options() );
 					array_push( $role_list, $count_users . ' ' . $role['role'] );
 				}
 
 				$role_result = implode( ', ', $role_list ) . '.';
 			} else {
 				// If there are no roles set status as error.
-				$this->set_status( WPMUDEV_DOCTOR_ERROR );
+				$this->set_status( CUSTOM_WP_DOCTOR_ERROR );
 				$role_result = 'No roles found.';
 			}
 
 			// Check for Super Admins if Multisite.
 			if ( is_multisite() ) {
 				// Gather Super Admins.
-				$super_admins = WP_CLI::runcommand( 'super-admin list --format=count', WPMUDEV_Doctor_Helper::runcommand_options() );
+				$super_admins = WP_CLI::runcommand( 'super-admin list --format=count', Custom_WP_Doctor_Helper::runcommand_options() );
 
 				if ( 0 === $super_admins ) {
 					// If there are no Super Admins set status as error.
-					$this->set_status( WPMUDEV_DOCTOR_ERROR );
+					$this->set_status( CUSTOM_WP_DOCTOR_ERROR );
 					$super_admin = '0 Super Admins, ';
 				} else {
 					$super_admin = $super_admins . ' Super Admins, ';
@@ -380,20 +368,18 @@ if ( defined( 'WP_CLI' ) && WP_CLI ) {
 	}
 
 	/**
-	 * Checks for Posts stats.
-	 *
-	 * command: wp doctor check wpmudev-posts-stats --config=PATH
+	 * Posts stats.
 	 */
-	class WPMUDEV_Doctor_Posts_Stats extends runcommand\Doctor\Checks\Check {
+	class Custom_WP_Doctor_Posts_Stats extends runcommand\Doctor\Checks\Check {
 		// Main function.
 		public function run() {
 			// Set status as success by default.
-			$this->set_status( WPMUDEV_DOCTOR_SUCCESS );
+			$this->set_status( CUSTOM_WP_DOCTOR_SUCCESS );
 
 			// Gather post stats.
-			$posts       = WP_CLI::runcommand( 'post list --post_type=post --format=count', WPMUDEV_Doctor_Helper::runcommand_options() );
-			$pages       = WP_CLI::runcommand( 'post list --post_type=page --format=count', WPMUDEV_Doctor_Helper::runcommand_options() );
-			$attachments = WP_CLI::runcommand( 'post list --post_type=attachment --format=count', WPMUDEV_Doctor_Helper::runcommand_options() );
+			$posts       = WP_CLI::runcommand( 'post list --post_type=post --format=count', Custom_WP_Doctor_Helper::runcommand_options() );
+			$pages       = WP_CLI::runcommand( 'post list --post_type=page --format=count', Custom_WP_Doctor_Helper::runcommand_options() );
+			$attachments = WP_CLI::runcommand( 'post list --post_type=attachment --format=count', Custom_WP_Doctor_Helper::runcommand_options() );
 
 			// Return message.
 			$this->set_message( $posts . ' Posts, ' . $pages . ' Pages, ' . $attachments . ' Attachments.' );
@@ -401,35 +387,33 @@ if ( defined( 'WP_CLI' ) && WP_CLI ) {
 	}
 
 	/**
-	 * Checks for Autoload options to not be over 900kb.
-	 *
-	 * command: wp doctor check wpmudev-autoload-report --config=PATH
+	 * Autoload stats.
 	 */
-	class WPMUDEV_Doctor_Autoload_Report extends runcommand\Doctor\Checks\Check {
+	class Custom_WP_Doctor_Autoload_Report extends runcommand\Doctor\Checks\Check {
 		// Limit in bytes.
 		private static $limit_bytes = 900 * 1024;
 
 		// Main function.
 		public function run() {
 			// Set status as success by default.
-			$this->set_status( WPMUDEV_DOCTOR_SUCCESS );
+			$this->set_status( CUSTOM_WP_DOCTOR_SUCCESS );
 
 			// Initialize the return message.
 			$message = '';
 
 			// Get total bytes of autoloaded options.
-			$total_bytes = WP_CLI::runcommand( 'option list --autoload=on --format=total_bytes', WPMUDEV_Doctor_Helper::runcommand_options() );
+			$total_bytes = WP_CLI::runcommand( 'option list --autoload=on --format=total_bytes', Custom_WP_Doctor_Helper::runcommand_options() );
 
 			// Convert bytes to readable format.
-			$human_limit = WPMUDEV_Doctor_Helper::format_bytes( self::$limit_bytes );
-			$human_total = WPMUDEV_Doctor_Helper::format_bytes( $total_bytes );
+			$human_limit = Custom_WP_Doctor_Helper::format_bytes( self::$limit_bytes );
+			$human_total = Custom_WP_Doctor_Helper::format_bytes( $total_bytes );
 
 			if ( self::$limit_bytes < $total_bytes ) {
 				// Set status as a warning.
-				$this->set_status( WPMUDEV_DOCTOR_WARNING );
+				$this->set_status( CUSTOM_WP_DOCTOR_WARNING );
 
 				// Gather autoloaded options.
-				$data = WP_CLI::runcommand( 'option list --fields=option_name,size_bytes --autoload=on --format=json', WPMUDEV_Doctor_Helper::runcommand_options() );
+				$data = WP_CLI::runcommand( 'option list --fields=option_name,size_bytes --autoload=on --format=json', Custom_WP_Doctor_Helper::runcommand_options() );
 
 				// Sort options by size.
 				usort(
@@ -446,7 +430,7 @@ if ( defined( 'WP_CLI' ) && WP_CLI ) {
 				$final_data = array();
 
 				foreach ( $data as $key => $value ) {
-					array_push( $final_data, $data[ $key ]['option_name'] . ' (' . WPMUDEV_Doctor_Helper::format_bytes( $data[ $key ]['size_bytes'] ) . ')' );
+					array_push( $final_data, $data[ $key ]['option_name'] . ' (' . Custom_WP_Doctor_Helper::format_bytes( $data[ $key ]['size_bytes'] ) . ')' );
 				}
 
 				// Adjust the return message if the check fails.
@@ -462,15 +446,13 @@ if ( defined( 'WP_CLI' ) && WP_CLI ) {
 	}
 
 	/**
-	 * Checks for TTFB.
-	 *
-	 * command: wp doctor check wpmudev-ttfb --config=PATH
+	 * TTFB.
 	 */
-	class WPMUDEV_Doctor_TTFB extends runcommand\Doctor\Checks\Check {
+	class Custom_WP_Doctor_TTFB extends runcommand\Doctor\Checks\Check {
 		// Main function.
 		public function run() {
 			// Set status as success by default.
-			$this->set_status( WPMUDEV_DOCTOR_SUCCESS );
+			$this->set_status( CUSTOM_WP_DOCTOR_SUCCESS );
 
 			// Initialize the return message.
 			$message = '';
@@ -493,7 +475,7 @@ if ( defined( 'WP_CLI' ) && WP_CLI ) {
 
 			if ( 0 == $curl_info['starttransfer_time'] ) { // phpcs:ignore
 				// Set status as warning if there's no response and adjust the return message.
-				$this->set_status( WPMUDEV_DOCTOR_WARNING );
+				$this->set_status( CUSTOM_WP_DOCTOR_WARNING );
 				$message = 'Could not retrieve Time to first byte.';
 			} else {
 				// Adjust the return message.
@@ -506,15 +488,13 @@ if ( defined( 'WP_CLI' ) && WP_CLI ) {
 	}
 
 	/**
-	 * Checks for Cache headers.
-	 *
-	 * command: wp doctor check wpmudev-cache-headers --config=PATH
+	 * Cache headers.
 	 */
-	class WPMUDEV_Doctor_Cache_Headers extends runcommand\Doctor\Checks\Check {
+	class Custom_WP_Doctor_Cache_Headers extends runcommand\Doctor\Checks\Check {
 		// Main function.
 		public function run() {
 			// Set status as success by default.
-			$this->set_status( WPMUDEV_DOCTOR_SUCCESS );
+			$this->set_status( CUSTOM_WP_DOCTOR_SUCCESS );
 
 			// Initialize the return message.
 			$message = '';
@@ -544,7 +524,7 @@ if ( defined( 'WP_CLI' ) && WP_CLI ) {
 
 			// If there are no headers set status to warning and adjust the return message.
 			if ( empty( $found_headers ) ) {
-				$this->set_status( WPMUDEV_DOCTOR_WARNING );
+				$this->set_status( CUSTOM_WP_DOCTOR_WARNING );
 				$message = 'Could not find any cache headers.';
 			} else {
 				// Adjust the return message.
@@ -565,14 +545,12 @@ if ( defined( 'WP_CLI' ) && WP_CLI ) {
 
 	/**
 	 * Verify Core Checksums.
-	 *
-	 * command: wp doctor check wpmudev-verify-core-checksums --config=PATH
 	 */
-	class WPMUDEV_Doctor_Verify_Core_Checksums extends runcommand\Doctor\Checks\Check {
+	class Custom_WP_Doctor_Verify_Core_Checksums extends runcommand\Doctor\Checks\Check {
 		// Main function.
 		public function run() {
 			// Set status as success by default.
-			$this->set_status( WPMUDEV_DOCTOR_SUCCESS );
+			$this->set_status( CUSTOM_WP_DOCTOR_SUCCESS );
 
 			// Initialize the return message.
 			$message = '';
@@ -585,7 +563,7 @@ if ( defined( 'WP_CLI' ) && WP_CLI ) {
 				$message = 'WordPress verifies against its checksums.';
 			} else {
 				// Set status as error if there are checksum issues and adjust the return message.
-				$this->set_status( WPMUDEV_DOCTOR_ERROR );
+				$this->set_status( CUSTOM_WP_DOCTOR_ERROR );
 				$message = 'Issues have been found. Please run "wp core verify-checksums".';
 			}
 
@@ -595,11 +573,9 @@ if ( defined( 'WP_CLI' ) && WP_CLI ) {
 	}
 
 	/**
-	 * Cron statistics.
-	 *
-	 * command: wp doctor check wpmudev-cron-stats --config=PATH
+	 * Cron stats.
 	 */
-	class WPMUDEV_Doctor_Cron_Stats extends runcommand\Doctor\Checks\Check {
+	class Custom_WP_Doctor_Cron_Stats extends runcommand\Doctor\Checks\Check {
 		// Limit of crons in total.
 		private static $limit_count = 50;
 
@@ -612,14 +588,14 @@ if ( defined( 'WP_CLI' ) && WP_CLI ) {
 			$dup_msg = '';
 
 			// Count crons.
-			$crons      = WP_CLI::runcommand( 'cron event list --format=json', WPMUDEV_Doctor_Helper::runcommand_options() );
+			$crons      = WP_CLI::runcommand( 'cron event list --format=json', Custom_WP_Doctor_Helper::runcommand_options() );
 			$cron_count = count( $crons );
 
 			// Adjust the status if the crons exceed the limit.
 			if ( $cron_count >= self::$limit_count ) {
-				$this->set_status( WPMUDEV_DOCTOR_WARNING );
+				$this->set_status( CUSTOM_WP_DOCTOR_WARNING );
 			} else {
-				$this->set_status( WPMUDEV_DOCTOR_SUCCESS );
+				$this->set_status( CUSTOM_WP_DOCTOR_SUCCESS );
 			}
 
 			// Cound duplicates.
@@ -638,7 +614,7 @@ if ( defined( 'WP_CLI' ) && WP_CLI ) {
 
 			// Adjust the status to warning if the duplicate crons exceed the limit.
 			if ( $excess_duplicates ) {
-				$this->set_status( WPMUDEV_DOCTOR_WARNING );
+				$this->set_status( CUSTOM_WP_DOCTOR_WARNING );
 				$dup_msg = ' Detected ' . self::$dup_limit_count . ' or more of the same cron job.';
 			}
 
@@ -648,11 +624,9 @@ if ( defined( 'WP_CLI' ) && WP_CLI ) {
 	}
 
 	/**
-	 * Constants Checks.
-	 *
-	 * command: wp doctor check wpmudev-constants --config=PATH
+	 * Constants.
 	 */
-	class WPMUDEV_Doctor_Constants extends runcommand\Doctor\Checks\Check {
+	class Custom_WP_Doctor_Constants extends runcommand\Doctor\Checks\Check {
 		// Array of undefined constants.
 		private static $undefined_constants = array(
 			'WP_DEBUG',
@@ -682,7 +656,7 @@ if ( defined( 'WP_CLI' ) && WP_CLI ) {
 		// Main function.
 		public function run() {
 			// Set status as success by default.
-			$this->set_status( WPMUDEV_DOCTOR_SUCCESS );
+			$this->set_status( CUSTOM_WP_DOCTOR_SUCCESS );
 
 			// Initialize the return message.
 			$message = 'All constants are ok.';
@@ -739,7 +713,7 @@ if ( defined( 'WP_CLI' ) && WP_CLI ) {
 
 			// If wrong_constants is not empty set status to warning and adjust the return message.
 			if ( ! empty( $wrong_constants ) ) {
-				$this->set_status( WPMUDEV_DOCTOR_WARNING );
+				$this->set_status( CUSTOM_WP_DOCTOR_WARNING );
 				$message = '';
 
 				if ( array_key_exists( 'defined', $wrong_constants ) ) {
@@ -759,11 +733,9 @@ if ( defined( 'WP_CLI' ) && WP_CLI ) {
 	}
 
 	/**
-	 * Log Scanner.
-	 *
-	 * command: wp doctor check wpmudev-log-scan --config=PATH
+	 * Log scan.
 	 */
-	class WPMUDEV_Doctor_Log_Scan extends runcommand\Doctor\Checks\Check {
+	class Custom_WP_Doctor_Log_Scan extends runcommand\Doctor\Checks\Check {
 
 		// List of known filenames to skip.
 		private static $skip_names = array(
@@ -799,10 +771,10 @@ if ( defined( 'WP_CLI' ) && WP_CLI ) {
 			$limit = (int) self::$size_limit;
 
 			// Set status as success by default.
-			$this->set_status( WPMUDEV_DOCTOR_SUCCESS );
+			$this->set_status( CUSTOM_WP_DOCTOR_SUCCESS );
 
 			// Initialize the return message.
-			$message = 'No big log files detected (limit ' . WPMUDEV_Doctor_Helper::format_bytes( $limit ) . ').';
+			$message = 'No big log files detected (limit ' . Custom_WP_Doctor_Helper::format_bytes( $limit ) . ').';
 
 			// Initialize log_files array.
 			$log_files = array();
@@ -816,14 +788,14 @@ if ( defined( 'WP_CLI' ) && WP_CLI ) {
 					$filename = $file->getBasename( '.' . $file->getExtension() );
 					if ( ! in_array( $filename, self::$skip_names, true ) && $file->getSize() > $limit && in_array( $file->getExtension(), self::$extensions, true ) ||
 						! in_array( $filename, self::$skip_names, true ) && $file->getSize() > $limit && in_array( $filename, self::$accept_names, true ) ) {
-						$log_files[] = str_replace( ABSPATH, '', $file->getPathname() ) . ' (' . WPMUDEV_Doctor_Helper::format_bytes( $file->getSize() ) . ')';
+						$log_files[] = str_replace( ABSPATH, '', $file->getPathname() ) . ' (' . Custom_WP_Doctor_Helper::format_bytes( $file->getSize() ) . ')';
 					}
 				}
 			}
 
 			// If the log_files array is not empty adjust the return message and set status to warning.
 			if ( ! empty( $log_files ) ) {
-				$this->set_status( WPMUDEV_DOCTOR_WARNING );
+				$this->set_status( CUSTOM_WP_DOCTOR_WARNING );
 				$message = implode( ', ', $log_files ) . '.';
 			}
 
@@ -835,7 +807,7 @@ if ( defined( 'WP_CLI' ) && WP_CLI ) {
 	/**
 	 * Helper class.
 	 */
-	class WPMUDEV_Doctor_Helper {
+	class Custom_WP_Doctor_Helper {
 		/**
 		 * Convert bytes into a human readable format.
 		 */

@@ -1,0 +1,60 @@
+# This file comes with "custom-wp-doctor".
+#
+# Author:      Konstantinos Xenos
+# Author URI:  https://xkon.gr
+# Repo URI:    https://github.com/mrxkon/custom-wp-doctor/
+# License:     GPLv2 or later
+# License URI: https://www.gnu.org/licenses/gpl-2.0.html
+
+core-stats:
+  class: Custom_WP_Doctor_Core_Stats
+  require: custom-wp-doctor-commands.php
+language-update:
+  check: Language_Update
+plugin-stats:
+  class: Custom_WP_Doctor_Plugin_Stats
+  require: custom-wp-doctor-commands.php
+wpmudev-plugins:
+  class: Custom_WP_Doctor_Plugin_Check
+  require: custom-wp-doctor-commands.php
+theme-stats:
+  class: Custom_WP_Doctor_Theme_Stats
+  require: custom-wp-doctor-commands.php
+user-stats:
+  class: Custom_WP_Doctor_User_Stats
+  require: custom-wp-doctor-commands.php
+role-stats:
+  class: Custom_WP_Doctor_Role_Stats
+  require: custom-wp-doctor-commands.php
+posts-stats:
+  class: Custom_WP_Doctor_Posts_Stats
+  require: custom-wp-doctor-commands.php
+autoload-stats:
+  class: Custom_WP_Doctor_Autoload_Report
+  require: custom-wp-doctor-commands.php
+ttfb:
+  class: Custom_WP_Doctor_TTFB
+  require: custom-wp-doctor-commands.php
+cache-headers:
+  class: Custom_WP_Doctor_Cache_Headers
+  require: custom-wp-doctor-commands.php
+verify-core-checksums:
+  class: Custom_WP_Doctor_Verify_Core_Checksums
+  require: custom-wp-doctor-commands.php
+cron-stats:
+  class: Custom_WP_Doctor_Cron_Stats
+  require: custom-wp-doctor-commands.php
+constants:
+  class: Custom_WP_Doctor_Constants
+  require: custom-wp-doctor-commands.php
+log-scan:
+  class: Custom_WP_Doctor_Log_Scan
+  require: custom-wp-doctor-commands.php
+file-eval:
+  check: File_Contents
+  options:
+    regex: eval\(.*base64_decode\(.*
+cache-flush:
+  check: Cache_Flush
+php-in-upload:
+  check: PHP_In_Upload
