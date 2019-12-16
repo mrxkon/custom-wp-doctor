@@ -48,7 +48,7 @@ if ( defined( 'WP_CLI' ) && WP_CLI ) {
  * Adds a wrapper "wp doctor" function to run our custom config directly.
  */
 class Custom_WP_Doctor {
-	public function __invoke( $args, $assoc_args ) {
+	public function __invoke() {
 		WP_CLI::runcommand( 'doctor check --all --config=' . ABSPATH . 'wp-content/mu-plugins/custom-wp-doctor/custom-wp-doctor.yml' );
 	}
 }
