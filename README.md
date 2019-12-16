@@ -2,10 +2,6 @@
 
 ## Customized `wp doctor` commands & checks.
 
-### Props to all contributors of [wp-cli/doctor-command](https://github.com/wp-cli/doctor-command) as some parts of the code have been used on the modified commands.
-
-This was created to fill a "gap" that I felt existed for easier usage, friendlier messages & to display as much information as possible in a more compact way when running only a `wp doctor` command instead of having to always run `wp doctor check --all --config=some/super/long/path`.
-
 ![Tests](https://github.com/mrxkon/custom-wp-doctor/workflows/Tests/badge.svg)
 [![PHP Compatibility 7.0+](https://img.shields.io/badge/PHP%20Compatibility-7.0+-8892BF)](https://github.com/PHPCompatibility/PHPCompatibility)
 [![WordPress Coding Standards](https://img.shields.io/badge/WordPress%20Coding%20Standards-latest-blue)](https://github.com/WordPress/WordPress-Coding-Standards)
@@ -13,15 +9,20 @@ This was created to fill a "gap" that I felt existed for easier usage, friendlie
 [![Quality Gate Status](https://sonarcloud.io/api/project_badges/measure?project=mrxkon_custom-wp-doctor&metric=alert_status)](https://sonarcloud.io/dashboard?id=mrxkon_custom-wp-doctor) [![Security Rating](https://sonarcloud.io/api/project_badges/measure?project=mrxkon_custom-wp-doctor&metric=security_rating)](https://sonarcloud.io/dashboard?id=mrxkon_custom-wp-doctor)
  [![Maintainability Rating](https://sonarcloud.io/api/project_badges/measure?project=mrxkon_custom-wp-doctor&metric=sqale_rating)](https://sonarcloud.io/dashboard?id=mrxkon_custom-wp-doctor) [![Reliability Rating](https://sonarcloud.io/api/project_badges/measure?project=mrxkon_custom-wp-doctor&metric=reliability_rating)](https://sonarcloud.io/dashboard?id=mrxkon_custom-wp-doctor)
 
-
 [![My Website](https://img.shields.io/badge/My-Website-orange.svg)](https://xkon.gr)  [![WordPress Profile](https://img.shields.io/badge/WordPress-Profile-blue.svg)](https://profiles.wordpress.org/xkon)
 
 [![Built for WordPress](https://img.shields.io/badge/built%20for-WordPress-blue)](https://wordpress.org) [![Built for WP-CLI](https://img.shields.io/badge/built%20for-WP--CLI-3d681d)](https://wp-cli.org/) [![Built for WPMU DEV](https://img.shields.io/badge/built%20for-WPMU%20DEV-blue)](https://premium.wpmudev.org/)
 [![License: GPL v2](https://img.shields.io/badge/License-GPL%20v2+-red)](http://www.gnu.org/licenses/gpl-2.0.html)
 
 ---
+
 ### Pull requests are welcome!
+
 ---
+
+### Props to all contributors of [wp-cli/doctor-command](https://github.com/wp-cli/doctor-command) as some parts of the code have been used on the modified commands.
+
+This was created to fill a "gap" that I felt existed for easier usage, friendlier messages & to display as much information as possible in a more compact way when running only a `wp doctor` command instead of having to always run `wp doctor check --all --config=some/super/long/path`.
 
 ## How to install
 
