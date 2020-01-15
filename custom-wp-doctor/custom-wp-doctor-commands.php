@@ -834,12 +834,10 @@ if ( defined( 'WP_CLI' ) && WP_CLI ) {
 			$iterator  = new RecursiveIteratorIterator( $directory, RecursiveIteratorIterator::CHILD_FIRST );
 
 			foreach ( $iterator as $file ) {
-				if ( is_file( $file ) ) {
-					if ( 'php' === $file->getExtension() ) {
-						$file = wp_normalize_path( $file );
+				if ( is_file( $file ) && 'php' === $file->getExtension() ) {
+					$file = wp_normalize_path( $file );
 
-						$php_files[] = str_replace( $scan_path, '', $file );
-					}
+					$php_files[] = str_replace( $scan_path, '', $file );
 				}
 			}
 
@@ -891,15 +889,13 @@ if ( defined( 'WP_CLI' ) && WP_CLI ) {
 			$iterator  = new RecursiveIteratorIterator( $directory, RecursiveIteratorIterator::CHILD_FIRST );
 
 			foreach ( $iterator as $file ) {
-				if ( is_file( $file ) ) {
-					if ( $this->file_extension === $file->getExtension() ) {
-						$contents = file_get_contents( $file->getPathname() );
+				if ( is_file( $file ) && $this->file_extension === $file->getExtension() ) {
+					$contents = file_get_contents( $file->getPathname() );
 
-						if ( preg_match( '#' . $this->regex . '#i', $contents ) ) {
-							$file = wp_normalize_path( $file );
+					if ( preg_match( '#' . $this->regex . '#i', $contents ) ) {
+						$file = wp_normalize_path( $file );
 
-							$matched_files[] = str_replace( $scan_dir, '', $file );
-						}
+						$matched_files[] = str_replace( $scan_dir, '', $file );
 					}
 				}
 			}
