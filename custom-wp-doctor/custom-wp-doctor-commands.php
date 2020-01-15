@@ -805,6 +805,54 @@ if ( defined( 'WP_CLI' ) && WP_CLI ) {
 	}
 
 	/**
+	 * PHP in uploads folder scan.
+	 */
+	class Custom_WP_Doctor_PHP_In_Upload extends runcommand\Doctor\Checks\Check {
+		// Main function.
+		public function run() {
+			// Set status as success by default.
+			$this->set_status( 'success' );
+
+			// Initialize the return message.
+			$message = 'No PHP files found in the Uploads folder.';
+
+			// Path to the uploads folder.
+			$wp_content_dir = wp_upload_dir();
+
+			// Initialize php_files array.
+			$php_files = array();
+
+			// Go through the folders and files to gather information.
+			$directory = new RecursiveDirectoryIterator( $wp_content_dir['basedir'], RecursiveDirectoryIterator::SKIP_DOTS );
+			$iterator  = new RecursiveIteratorIterator( $directory, RecursiveIteratorIterator::CHILD_FIRST );
+
+			foreach ( $iterator as $file ) {
+				if ( is_file( $file ) ) {
+					if ( 'php' === $file->getExtension() ) {
+						$php_files[] = str_replace( $wp_content_dir['basedir'], '', $file );
+					}
+				}
+			}
+
+			// Defender adds it's own PHP for security testing, remove that to avoid false-positives.
+			$defender_key = array_keys( $php_files, '\wp-defender\index.php', true );
+
+			if ( ! empty( $defender_key ) ) {
+				unset( $php_files[ $defender_key[0] ] );
+			}
+
+			// If the php_files array is not empty adjust the return message and set status to warning.
+			if ( ! empty( $php_files ) ) {
+				$this->set_status( 'warning' );
+				$message = implode( ', ', $php_files ) . '.';
+			}
+
+			// Return message.
+			$this->set_message( $message );
+		}
+	}
+
+	/**
 	 * Helper class.
 	 */
 	class Custom_WP_Doctor_Helper {

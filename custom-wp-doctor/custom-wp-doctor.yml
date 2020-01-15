@@ -56,5 +56,6 @@ file-eval:
     regex: eval\(.*base64_decode\(.*
 cache-flush:
   check: Cache_Flush
-php-in-upload:
-  check: PHP_In_Upload
+php-in-uploads-dir:
+  class: Custom_WP_Doctor_PHP_In_Upload
+  require: custom-wp-doctor-commands.php
