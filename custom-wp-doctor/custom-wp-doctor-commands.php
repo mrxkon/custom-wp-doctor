@@ -56,7 +56,7 @@ if ( defined( 'WP_CLI' ) && WP_CLI ) {
 
 			if ( $has_minor && $has_major || $has_major ) {
 				// If both updates exist or if there is a major set as an error.
-				$this->set_status( CUSTOM_WP_DOCTOR_ERROR );
+				$this->set_status( CUSTOM_WP_DOCTOR_WARNING );
 				$core = 'A new major version is available.';
 			} elseif ( $has_minor ) {
 				// If it's a minor update set as a warning.
@@ -274,9 +274,9 @@ if ( defined( 'WP_CLI' ) && WP_CLI ) {
 				$updates = $txt . ' available for: ' . implode( ', ', $theme_updates ) . '.';
 			}
 
-			// Set status as error if there are no themes found.
+			// Set status as warning if there are no themes found.
 			if ( 0 === $total_themes ) {
-				$this->set_status( CUSTOM_WP_DOCTOR_ERROR );
+				$this->set_status( CUSTOM_WP_DOCTOR_WARNING );
 			}
 
 			// Return message.
@@ -307,8 +307,8 @@ if ( defined( 'WP_CLI' ) && WP_CLI ) {
 			if ( 0 !== $total_users ) {
 				$message = $total_users . ' Total.';
 			} else {
-				// If there are no users adjust the return message and set status as error.
-				$this->set_status( CUSTOM_WP_DOCTOR_ERROR );
+				// If there are no users adjust the return message and set status as warning.
+				$this->set_status( CUSTOM_WP_DOCTOR_WARNING );
 				$message = 'No Users found.';
 			}
 
@@ -343,8 +343,8 @@ if ( defined( 'WP_CLI' ) && WP_CLI ) {
 
 				$role_result = implode( ', ', $role_list ) . '.';
 			} else {
-				// If there are no roles set status as error.
-				$this->set_status( CUSTOM_WP_DOCTOR_ERROR );
+				// If there are no roles set status as warning.
+				$this->set_status( CUSTOM_WP_DOCTOR_WARNING );
 				$role_result = 'No roles found.';
 			}
 
@@ -354,8 +354,8 @@ if ( defined( 'WP_CLI' ) && WP_CLI ) {
 				$super_admins = WP_CLI::runcommand( 'super-admin list --format=count', Custom_WP_Doctor_Helper::runcommand_options() );
 
 				if ( 0 === $super_admins ) {
-					// If there are no Super Admins set status as error.
-					$this->set_status( CUSTOM_WP_DOCTOR_ERROR );
+					// If there are no Super Admins set status as warning.
+					$this->set_status( CUSTOM_WP_DOCTOR_WARNING );
 					$super_admin = '0 Super Admins, ';
 				} else {
 					$super_admin = $super_admins . ' Super Admins, ';
@@ -563,7 +563,7 @@ if ( defined( 'WP_CLI' ) && WP_CLI ) {
 				$message = 'WordPress verifies against its checksums.';
 			} else {
 				// Set status as error if there are checksum issues and adjust the return message.
-				$this->set_status( CUSTOM_WP_DOCTOR_ERROR );
+				$this->set_status( CUSTOM_WP_DOCTOR_WARNING );
 				$message = 'Issues have been found. Please run "wp core verify-checksums".';
 			}
 
@@ -817,7 +817,7 @@ if ( defined( 'WP_CLI' ) && WP_CLI ) {
 		// Main function.
 		public function run() {
 			// Set status as success by default.
-			$this->set_status( 'success' );
+			$this->set_status( CUSTOM_WP_DOCTOR_SUCCESS );
 
 			// Initialize the return message.
 			$message = 'No PHP files found in the Uploads folder.';
@@ -852,7 +852,7 @@ if ( defined( 'WP_CLI' ) && WP_CLI ) {
 
 			// If the php_files array is not empty adjust the return message and set status to warning.
 			if ( ! empty( $php_files ) ) {
-				$this->set_status( 'warning' );
+				$this->set_status( CUSTOM_WP_DOCTOR_WARNING );
 				$message = implode( ', ', $php_files ) . '.';
 			}
 
@@ -874,16 +874,16 @@ if ( defined( 'WP_CLI' ) && WP_CLI ) {
 		// Extension of files to scan.
 		protected $file_extension;
 
-		// The matched files array.
-		protected $matches = array();
-
 		// Main function.
 		public function run() {
 			// Set status as success by default.
-			$this->set_status( 'success' );
+			$this->set_status( CUSTOM_WP_DOCTOR_SUCCESS );
 
 			// Initialize the return message.
 			$message = "All '{$this->file_extension}' files passed check for '{$this->regex}'.";
+
+			// Initialize matched_files array.
+			$matched_files = array();
 
 			// Go through the folders and files to gather information.
 			$scan_dir  = wp_normalize_path( ABSPATH );
@@ -898,17 +898,15 @@ if ( defined( 'WP_CLI' ) && WP_CLI ) {
 						if ( preg_match( '#' . $this->regex . '#i', $contents ) ) {
 							$file = wp_normalize_path( $file );
 
-							$this->matches[] = str_replace( $scan_dir, '', $file );
+							$matched_files[] = str_replace( $scan_dir, '', $file );
 						}
 					}
 				}
 			}
 
-			if ( ! empty( $this->matches ) ) {
-				$this->set_status( 'error' );
-				$count   = count( $this->matches );
-				$message = 1 === $count ? "1 '{$this->file_extension}' file" : "{$count} '{$this->file_extension}' files";
-				$message = "'{$this->regex}' was found in: " . implode( ', ', $this->matches );
+			if ( ! empty( $matched_files ) ) {
+				$this->set_status( CUSTOM_WP_DOCTOR_WARNING );
+				$message = "'{$this->regex}' was found in: " . implode( ', ', $matched_files );
 			}
 
 			// Return message.
