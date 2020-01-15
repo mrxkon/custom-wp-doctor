@@ -50,12 +50,18 @@ constants:
 log-scan:
   class: Custom_WP_Doctor_Log_Scan
   require: custom-wp-doctor-commands.php
-file-eval:
-  check: File_Contents
+regex-eval-b64decode:
+  class: Custom_WP_Doctor_Regex_Scan
+  require: custom-wp-doctor-commands.php
   options:
     regex: eval\(.*base64_decode\(.*
-cache-flush:
-  check: Cache_Flush
+    file_extension: php
+regex-wp-cache-flush:
+  class: Custom_WP_Doctor_Regex_Scan
+  require: custom-wp-doctor-commands.php
+  options:
+    regex: wp_cache_flush\(
+    file_extension: php
 php-in-uploads-dir:
   class: Custom_WP_Doctor_PHP_In_Upload
   require: custom-wp-doctor-commands.php

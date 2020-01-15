@@ -780,15 +780,21 @@ if ( defined( 'WP_CLI' ) && WP_CLI ) {
 			$log_files = array();
 
 			// Go through the folders and files to gather information.
-			$directory = new RecursiveDirectoryIterator( ABSPATH, RecursiveDirectoryIterator::SKIP_DOTS );
+			$scan_path = wp_normalize_path( ABSPATH );
+			$directory = new RecursiveDirectoryIterator( $scan_path, RecursiveDirectoryIterator::SKIP_DOTS );
 			$iterator  = new RecursiveIteratorIterator( $directory, RecursiveIteratorIterator::CHILD_FIRST );
 
 			foreach ( $iterator as $file ) {
 				if ( is_file( $file ) ) {
 					$filename = $file->getBasename( '.' . $file->getExtension() );
-					if ( ! in_array( $filename, self::$skip_names, true ) && $file->getSize() > $limit && in_array( $file->getExtension(), self::$extensions, true ) ||
-						! in_array( $filename, self::$skip_names, true ) && $file->getSize() > $limit && in_array( $filename, self::$accept_names, true ) ) {
-						$log_files[] = str_replace( ABSPATH, '', $file->getPathname() ) . ' (' . Custom_WP_Doctor_Helper::format_bytes( $file->getSize() ) . ')';
+
+					if (
+						! in_array( $filename, self::$skip_names, true ) && $file->getSize() > $limit && in_array( $file->getExtension(), self::$extensions, true ) ||
+						! in_array( $filename, self::$skip_names, true ) && $file->getSize() > $limit && in_array( $filename, self::$accept_names, true )
+					) {
+						$file_path = wp_normalize_path( $file->getPathname() );
+
+						$log_files[] = str_replace( $scan_path, '', $file_path ) . ' (' . Custom_WP_Doctor_Helper::format_bytes( $file->getSize() ) . ')';
 					}
 				}
 			}
@@ -823,13 +829,16 @@ if ( defined( 'WP_CLI' ) && WP_CLI ) {
 			$php_files = array();
 
 			// Go through the folders and files to gather information.
-			$directory = new RecursiveDirectoryIterator( $wp_content_dir['basedir'], RecursiveDirectoryIterator::SKIP_DOTS );
+			$scan_path = wp_normalize_path( $wp_content_dir['basedir'] );
+			$directory = new RecursiveDirectoryIterator( $scan_path, RecursiveDirectoryIterator::SKIP_DOTS );
 			$iterator  = new RecursiveIteratorIterator( $directory, RecursiveIteratorIterator::CHILD_FIRST );
 
 			foreach ( $iterator as $file ) {
 				if ( is_file( $file ) ) {
 					if ( 'php' === $file->getExtension() ) {
-						$php_files[] = str_replace( $wp_content_dir['basedir'], '', $file );
+						$file = wp_normalize_path( $file );
+
+						$php_files[] = str_replace( $scan_path, '', $file );
 					}
 				}
 			}
@@ -845,6 +854,78 @@ if ( defined( 'WP_CLI' ) && WP_CLI ) {
 			if ( ! empty( $php_files ) ) {
 				$this->set_status( 'warning' );
 				$message = implode( ', ', $php_files ) . '.';
+			}
+
+			// Return message.
+			$this->set_message( $message );
+		}
+	}
+
+	/**
+	 * Scans files with a Regex pattern.
+	 */
+	class Custom_WP_Doctor_Regex_Scan extends runcommand\Doctor\Checks\Check {
+		// Regex pattern to check against each file’s contents.
+		protected $regex;
+
+		// Assert existence or absence of the regex pattern.
+		protected $exists = false;
+
+		// Extension of files to scan.
+		protected $file_extension;
+
+		// The matched files array.
+		protected $matches = array();
+
+		// Main function.
+		public function run() {
+			// Set status as success by default.
+			$this->set_status( 'success' );
+
+			// Initialize the return message.
+			$message = "All '{$this->file_extension}' files passed check for '{$this->regex}'.";
+
+			// Go through the folders and files to gather information.
+			$scan_dir  = wp_normalize_path( ABSPATH );
+			$directory = new RecursiveDirectoryIterator( $scan_dir, RecursiveDirectoryIterator::SKIP_DOTS );
+			$iterator  = new RecursiveIteratorIterator( $directory, RecursiveIteratorIterator::CHILD_FIRST );
+
+			foreach ( $iterator as $file ) {
+				if ( is_file( $file ) ) {
+					if ( $this->file_extension === $file->getExtension() ) {
+						$contents = file_get_contents( $file->getPathname() );
+
+						if ( preg_match( '#' . $this->regex . '#i', $contents ) ) {
+							$file = wp_normalize_path( $file );
+
+							$this->matches[] = str_replace( $scan_dir, '', $file );
+						}
+					}
+				}
+			}
+			error_log( print_r( $this->matches, true ) );
+			if ( ! empty( $this->matches ) ) {
+				//if matches are found
+				if ( true == $this->exists ) {
+					// //$exists set to true so we should report true if something is found
+					// $this->set_status( 'success' );
+					// $count   = count( $this->matches );
+					// $message = 1 === $count ? "1 '{$this->file_extension}' file" : "{$count} '{$this->file_extension}' files";
+					// $this->set_message( "{$message} passed check for '{$this->regex}'." );
+				} else {
+					//$exists is not set to true so we should report error if something is found
+					$this->set_status( 'error' );
+					$count   = count( $this->matches );
+					$message = 1 === $count ? "1 '{$this->file_extension}' file" : "{$count} '{$this->file_extension}' files";
+					$this->set_message( "{$message} failed check for '{$this->regex}'." );
+				}
+			} else {
+				//No Matches Found
+				if ( true == $this->exists ) {
+					//$exists set to true so we should report error if regex is not found
+					$this->set_status( 'error' );
+					$this->set_message( "0 '{$this->file_extension}' files passed check for '{$this->regex}'." );
+				}
 			}
 
 			// Return message.
