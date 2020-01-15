@@ -903,29 +903,12 @@ if ( defined( 'WP_CLI' ) && WP_CLI ) {
 					}
 				}
 			}
-			error_log( print_r( $this->matches, true ) );
+
 			if ( ! empty( $this->matches ) ) {
-				//if matches are found
-				if ( true == $this->exists ) {
-					// //$exists set to true so we should report true if something is found
-					// $this->set_status( 'success' );
-					// $count   = count( $this->matches );
-					// $message = 1 === $count ? "1 '{$this->file_extension}' file" : "{$count} '{$this->file_extension}' files";
-					// $this->set_message( "{$message} passed check for '{$this->regex}'." );
-				} else {
-					//$exists is not set to true so we should report error if something is found
-					$this->set_status( 'error' );
-					$count   = count( $this->matches );
-					$message = 1 === $count ? "1 '{$this->file_extension}' file" : "{$count} '{$this->file_extension}' files";
-					$this->set_message( "{$message} failed check for '{$this->regex}'." );
-				}
-			} else {
-				//No Matches Found
-				if ( true == $this->exists ) {
-					//$exists set to true so we should report error if regex is not found
-					$this->set_status( 'error' );
-					$this->set_message( "0 '{$this->file_extension}' files passed check for '{$this->regex}'." );
-				}
+				$this->set_status( 'error' );
+				$count   = count( $this->matches );
+				$message = 1 === $count ? "1 '{$this->file_extension}' file" : "{$count} '{$this->file_extension}' files";
+				$message = "'{$this->regex}' was found in: " . implode( ', ', $this->matches );
 			}
 
 			// Return message.
