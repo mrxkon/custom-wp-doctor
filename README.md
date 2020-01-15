@@ -30,27 +30,27 @@ If everything is done correctly you can now run `wp doctor` and you should get a
 
 ```
 $ wp doctor
-Running checks  100% [===================================================================================] 0:05 / 0:04
-+-----------------------+---------+--------------------------------------------------------------------------------+
-| name                  | status  | message                                                                        |
-+-----------------------+---------+--------------------------------------------------------------------------------+
-| file-eval             | success | All 'php' files passed check for 'eval\(.*base64_decode\(.*'.                  |
-| cache-flush           | warning | Use of wp_cache_flush() detected.                                              |
-| core-stats            | success | WordPress is at the latest version. Single Site, Public.                       |
-| language-update       | success | Languages are up to date.                                                      |
-| plugin-stats          | success | 10 Total, 4 Active (limit 80), 2 Inactive (limit 40%), 2 Must-use, 2 Dropins.  |
-| wpmudev-plugins       | success | WPMU DEV Dashboard, Hummingbird, Defender & Smush are installed and activated. |
-| theme-stats           | warning | 6 Total. 2 updates available for: twentyeleven, twentytwelve.                  |
-| user-stats            | success | 1 Total.                                                                       |
-| role-stats            | success | 1 administrator, 0 editor, 0 author, 0 contributor, 0 subscriber.              |
-| posts-stats           | success | 1 Posts, 2 Pages, 0 Attachments.                                               |
-| autoload-stats        | success | 19.1kb Total (limit 900kb).                                                    |
-| ttfb                  | success | 0.020024s Time to first byte (TTFB).                                           |
-| cache-headers         | success | Hummingbird.                                                                   |
-| verify-core-checksums | success | WordPress verifies against its checksums.                                      |
-| cron-stats            | success | 15 Total (limit 50).                                                           |
-| constants             | success | All constants are ok.                                                          |
-| log-scan              | warning | file.txt (100mb), error_log (100mb).                                           |
-| php-in-upload         | warning | PHP files detected in the Uploads folder.                                      |
-+-----------------------+---------+--------------------------------------------------------------------------------+
+Running checks  100% [===========================================================================================================================] 0:05 / 0:04
++-----------------------+---------+--------------------------------------------------------------------------------------------------------------------------+
+| name                  | status  | message                                                                                                                  |
++-----------------------+---------+--------------------------------------------------------------------------------------------------------------------------+
+| core-stats            | success | WordPress is at the latest version. Single Site, Public.                                                                 |
+| language-update       | success | Languages are up to date.                                                                                                |
+| plugin-stats          | warning | 3 Total, 0 Active (limit 80), 2 Inactive (limit 40%), 1 Must-use, 0 Dropins.                                             |
+| wpmudev-plugins       | warning | Not installed or activated: WPMU DEV Dashboard, Hummingbird, Defender, Smush                                             |
+| theme-stats           | success | 5 Total.                                                                                                                 |
+| user-stats            | success | 2 Total.                                                                                                                 |
+| role-stats            | success | 0 customer, 0 shop_manager, 1 dpo, 1 administrator, 0 editor, 0 author, 0 contributor, 0 subscriber.                     |
+| posts-stats           | success | 1 Posts, 3 Pages, 3 Attachments.                                                                                         |
+| autoload-stats        | warning | 1.05mb Total (limit 900kb). 3 biggest options: lalala (1.01mb), rewrite_rules (9.42kb), blc_installation_log (7.8kb).    |
+| ttfb                  | success | 0.131109s Time to first byte (TTFB).                                                                                     |
+| cache-headers         | warning | Could not find any cache headers.                                                                                        |
+| verify-core-checksums | warning | Issues have been found. Please run "wp core verify-checksums".                                                           |
+| cron-stats            | success | 15 Total (limit 50).                                                                                                     |
+| constants             | warning | Defined: WP_DEBUG.                                                                                                       |
+| log-scan              | success | No big log files detected (limit 10mb).                                                                                  |
+| regex-eval-b64decode  | success | 'eval\(.*base64_decode\(.*' was not found in any of the '.php' files.                                                    |
+| regex-wp-cache-flush  | warning | 'wp_cache_flush\(' was found in: wp-admin/includes/update-core.php, wp-admin/includes/upgrade.php, wp-includes/cache.php |
+| php-in-uploads-dir    | warning | /wp-defender/index.php.                                                                                                  |
++-----------------------+---------+--------------------------------------------------------------------------------------------------------------------------+
 ```
