@@ -878,7 +878,7 @@ if ( defined( 'WP_CLI' ) && WP_CLI ) {
 			$this->set_status( CUSTOM_WP_DOCTOR_SUCCESS );
 
 			// Initialize the return message.
-			$message = "All '{$this->file_extension}' files passed check for '{$this->regex}'.";
+			$message = "'{$this->regex}' was not found in any of the '.{$this->file_extension}' files.";
 
 			// Initialize matched_files array.
 			$matched_files = array();
