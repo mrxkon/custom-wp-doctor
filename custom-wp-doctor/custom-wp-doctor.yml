@@ -68,3 +68,6 @@ php-in-uploads-dir:
   require: custom-wp-doctor-commands.php
   options:
     exclude: wp-defender,defender-security
+find-symlinks:
+  class: Custom_WP_Doctor_Find_Symlinks
+  require: custom-wp-doctor-commands.php

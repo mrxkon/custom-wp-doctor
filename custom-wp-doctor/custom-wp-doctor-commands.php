@@ -1094,6 +1094,44 @@ if ( defined( 'WP_CLI' ) && WP_CLI ) {
 	}
 
 	/**
+	 * Scans files & folders to report if they are symlinks.
+	 */
+	class Custom_WP_Doctor_Find_Symlinks extends runcommand\Doctor\Checks\Check {
+		// Main function.
+		public function run() {
+			// Set status as success by default.
+			$this->set_status( CUSTOM_WP_DOCTOR_SUCCESS );
+
+			// Initialize the return message.
+			$message = "No symlinks found.";
+
+			// Initialize matched_files array.
+			$matched_files = array();
+
+			// Go through the folders and files to gather information.
+			$scan_dir  = wp_normalize_path( ABSPATH );
+			$directory = new RecursiveDirectoryIterator( $scan_dir, RecursiveDirectoryIterator::SKIP_DOTS );
+			$iterator  = new RecursiveIteratorIterator( $directory, RecursiveIteratorIterator::CHILD_FIRST );
+
+			foreach ( $iterator as $path ) {
+				if ( is_link( $path ) ) {
+					$the_path = wp_normalize_path( $path );
+
+					$matched_paths[] = str_replace( $scan_dir, '', $the_path );
+				}
+			}
+
+			if ( ! empty( $matched_paths ) ) {
+				$this->set_status( CUSTOM_WP_DOCTOR_WARNING );
+				$message = implode( ', ', $matched_paths );
+			}
+
+			// Return message.
+			$this->set_message( $message );
+		}
+	}
+
+	/**
 	 * Helper class.
 	 */
 	class Custom_WP_Doctor_Helper {
