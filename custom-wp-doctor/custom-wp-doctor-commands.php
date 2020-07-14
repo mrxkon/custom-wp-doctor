@@ -972,6 +972,9 @@ if ( defined( 'WP_CLI' ) && WP_CLI ) {
 	 * PHP in uploads folder scan.
 	 */
 	class Custom_WP_Doctor_PHP_In_Upload extends runcommand\Doctor\Checks\Check {
+		// Exclusions.
+		protected $exclude;
+
 		// Main function.
 		public function run() {
 			// Set status as success by default.
@@ -999,11 +1002,17 @@ if ( defined( 'WP_CLI' ) && WP_CLI ) {
 				}
 			}
 
-			// Defender adds it's own PHP for security testing, remove that to avoid false-positives.
-			$defender_key = array_keys( $php_files, '\wp-defender\index.php', true );
+			// Remove the exclusions if they exist.
+			if ( ! empty( $this->exclude ) ) {
+				$exclussion_list = explode( ',', $this->exclude );
 
-			if ( ! empty( $defender_key ) ) {
-				unset( $php_files[ $defender_key[0] ] );
+				foreach ( $exclussion_list as $exclussion ) {
+					foreach ( $php_files as $key => $php_file ) {
+						if ( strpos( $php_file, $exclussion ) !== false ) {
+							unset( $php_files[ $key ] );
+						}
+					}
+				}
 			}
 
 			// If the php_files array is not empty adjust the return message and set status to warning.
@@ -1030,7 +1039,7 @@ if ( defined( 'WP_CLI' ) && WP_CLI ) {
 		// Extension of files to scan.
 		protected $file_extension;
 
-		// Exclusions
+		// Exclusions.
 		protected $exclude;
 
 		// Main function.
