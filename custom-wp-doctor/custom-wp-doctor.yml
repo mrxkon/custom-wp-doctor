@@ -67,4 +67,4 @@ php-in-uploads-dir:
   class: Custom_WP_Doctor_PHP_In_Upload
   require: custom-wp-doctor-commands.php
   options:
-    exclude: wp-defender
+    exclude: wp-defender,defender-security
