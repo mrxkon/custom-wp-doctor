@@ -213,6 +213,76 @@ if ( defined( 'WP_CLI' ) && WP_CLI ) {
 	}
 
 	/**
+	 * Lists mu-plugins.
+	 */
+	class Custom_WP_Doctor_MuPlugin_List extends runcommand\Doctor\Checks\Check {
+		// Main function.
+		public function run() {
+			// Set status as success by default.
+			$this->set_status( CUSTOM_WP_DOCTOR_WARNING );
+
+			// Initialize the return message.
+			$message = "No must-use plugins found.";
+
+			// Initialize plugins array.
+			$plugins = array();
+
+			$mu_plugins = WP_CLI::runcommand(
+				'plugin list --status=must-use --format=json',
+				Custom_WP_Doctor_Helper::runcommand_options()
+			);
+
+			if ( ! empty( $mu_plugins ) ) {
+				foreach ( $mu_plugins as $mu_plugin ) {
+					$plugins[] = $mu_plugin['name'];
+				}
+			}
+
+			if ( ! empty( $plugins ) ) {
+				$message = implode( ', ', $plugins );
+			}
+
+			// Return message.
+			$this->set_message( $message );
+		}
+	}
+
+	/**
+	 * Lists dropins.
+	 */
+	class Custom_WP_Doctor_DropIn_List extends runcommand\Doctor\Checks\Check {
+		// Main function.
+		public function run() {
+			// Set status as success by default.
+			$this->set_status( CUSTOM_WP_DOCTOR_WARNING );
+
+			// Initialize the return message.
+			$message = "No dropin plugins found.";
+
+			// Initialize plugins array.
+			$plugins = array();
+
+			$dropin_plugins = WP_CLI::runcommand(
+				'plugin list --status=dropin --format=json',
+				Custom_WP_Doctor_Helper::runcommand_options()
+			);
+
+			if ( ! empty( $dropin_plugins ) ) {
+				foreach ( $dropin_plugins as $dropin ) {
+					$plugins[] = $dropin['name'];
+				}
+			}
+
+			if ( ! empty( $plugins ) ) {
+				$message = implode( ', ', $plugins );
+			}
+
+			// Return message.
+			$this->set_message( $message );
+		}
+	}
+
+	/**
 	 * WPMUDEV Plugins.
 	 */
 	class Custom_WP_Doctor_Plugin_Check extends runcommand\Doctor\Checks\Check {
@@ -1105,8 +1175,8 @@ if ( defined( 'WP_CLI' ) && WP_CLI ) {
 			// Initialize the return message.
 			$message = "No symlinks found.";
 
-			// Initialize matched_files array.
-			$matched_files = array();
+			// Initialize matched_paths array.
+			$matched_paths = array();
 
 			// Go through the folders and files to gather information.
 			$scan_dir  = wp_normalize_path( ABSPATH );

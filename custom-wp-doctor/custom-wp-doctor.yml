@@ -14,6 +14,12 @@ language-update:
 plugin-stats:
   class: Custom_WP_Doctor_Plugin_Stats
   require: custom-wp-doctor-commands.php
+mu-plugin-list:
+  class: Custom_WP_Doctor_MuPlugin_List
+  require: custom-wp-doctor-commands.php
+dropin-list:
+  class: Custom_WP_Doctor_DropIn_List
+  require: custom-wp-doctor-commands.php
 wpmudev-plugins:
   class: Custom_WP_Doctor_Plugin_Check
   require: custom-wp-doctor-commands.php
