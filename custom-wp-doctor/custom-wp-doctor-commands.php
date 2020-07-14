@@ -1030,6 +1030,9 @@ if ( defined( 'WP_CLI' ) && WP_CLI ) {
 		// Extension of files to scan.
 		protected $file_extension;
 
+		// Exclusions
+		protected $exclude;
+
 		// Main function.
 		public function run() {
 			// Set status as success by default.
@@ -1054,6 +1057,19 @@ if ( defined( 'WP_CLI' ) && WP_CLI ) {
 						$file = wp_normalize_path( $file );
 
 						$matched_files[] = str_replace( $scan_dir, '', $file );
+					}
+				}
+			}
+
+			// Remove the exclusions if they exist.
+			if ( ! empty( $this->exclude ) ) {
+				$exclussion_list = explode( ',', $this->exclude );
+
+				foreach ( $exclussion_list as $exclussion ) {
+					foreach ( $matched_files as $key => $matched_file ) {
+						if ( strpos( $matched_file, $exclussion ) !== false ) {
+							unset( $matched_files[ $key ] );
+						}
 					}
 				}
 			}

@@ -62,6 +62,7 @@ regex-wp-cache-flush:
   options:
     regex: wp_cache_flush\(
     file_extension: php
+    exclude: wp-admin,wp-includes,object-cache.php,wp-hummingbird,hummingbird-performance
 php-in-uploads-dir:
   class: Custom_WP_Doctor_PHP_In_Upload
   require: custom-wp-doctor-commands.php
